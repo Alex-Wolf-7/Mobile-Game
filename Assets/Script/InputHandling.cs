@@ -4,21 +4,11 @@ using UnityEngine;
 
 public class InputHandling : MonoBehaviour {
     Camera currentCamera;
-    Vector3 clickStart;
-    // Camera scroll vars
-    Vector3 cameraPos; // Initial camera position
-    Vector3 downPos; // Where does click start?
-    Vector3 dragOrigin; // Where are we moving?
-    // Zoom vars
-    Vector3 screenPosPrev;
-    Vector3 worldPosPrev;
+    Vector3 mousePos; // Position of mouse or average of all taps
+    bool scrolling;
+    
     // Touch handling vars
     int numTouchesLastFrame;
-    const float scrollSpeed = 1.3f; // Adjusted at different zoom levels for consistancy
-    const float zoomSpeedBase = 0.002f;
-    const int framesForLongPress = 12;
-    const float notClick = 25.0f; // If click moves more than a certain distance, it is not a click
-    const float zoomFocusMultiplier = 1.3f; // The rate which the camera moves towards the target
 
     // Spawning variables
     public Ship baseShip;
@@ -46,18 +36,30 @@ public class InputHandling : MonoBehaviour {
     }
 	
 	// Update is called once per frame
+    Vector3 clickStart; // location of downpress
 	void Update () {
-        Vector3 mousePos = Input.mousePosition;
+        mousePos = Input.mousePosition;
 
+        if (Input.GetMouseButton(0) == false) {
+            scrolling = false;
+            numTouchesLastFrame = Input.touchCount;
+            if (Input.GetMouseButtonUp(0) == false) {
+                return;
+            }
+        }
+
+        // Record position where click starts
         if (Input.GetMouseButtonDown(0) && canClick) {
             clickStart = mousePos;
         }
 
         // If mouse moves more than a certain distance since down press, it is no longer a click
-        bool canMove = true;
         Vector2 clickMove = new Vector2(mousePos.x - clickStart.x, mousePos.y - clickStart.y);
-        if (clickMove.magnitude >= notClick) {
+        bool canMove;
+        if (clickMove.magnitude >= CameraVars.notClick) {
             canMove = false;
+        } else {
+            canMove = true;
         }
 
         // If multiple touches, singular touch location is their average
@@ -71,29 +73,28 @@ public class InputHandling : MonoBehaviour {
             mousePos.y /= Input.touchCount;
         }
 
+        // Restart drag if number of touches changes to prevent jumping
         if (Input.touchCount != numTouchesLastFrame) {
             downPos = Vector3.zero;
+            scrolling = false;
         }
 
-        // Zoom in or out
+        // TWO TOUCHES: Zoom in or out
         if (Input.touchCount == 2 && canClick) {
-            zoom(mousePos);
+            zoom();
 
             numTouchesLastFrame = Input.touchCount;
             return;
         }
 
-        // Drag logic
-        if (Input.GetMouseButton(0)) {
-            scroll(mousePos);
+        // ONE TOUCH: drag
+        if (Input.GetMouseButton(0) && canMove == false) {
+            scroll();
             numTouchesLastFrame = Input.touchCount;
             return;
-        } else {
-            downPos = Vector3.zero;
         }
 
-
-        // When mouse button up... do single click activities
+        // TOUCH ENDS THIS FRAME: do single click activities
         if (Input.GetMouseButtonUp(0) && canClick && canMove) {
             Vector3 click = mousePos;
             float cameraHeight = currentCamera.ScreenToWorldPoint(click).z;
@@ -104,10 +105,16 @@ public class InputHandling : MonoBehaviour {
             // Check if click is on ally or enemy
             Vector2 point2D = new Vector2(click.x, click.y);
             bool found = selectAlly(point2D); // If on ally, select
-            if (found) return;
+            if (found) {
+                numTouchesLastFrame = Input.touchCount;
+                return;
+            }
             found = targetEnemy(point2D); // If on enemy, target
-            if (found) return;
-            
+            if (found) {
+                numTouchesLastFrame = Input.touchCount;
+                return;
+            }
+
             // If nothing else special to do, move dat boat to click location
             Ship.activeShip.setDestination(click);
         }
@@ -116,8 +123,8 @@ public class InputHandling : MonoBehaviour {
 	}
 
     // Zooms in towards mousePos
-    void zoom(Vector3 mousePos) {
-        float zoomSpeed = zoomSpeedBase * currentCamera.orthographicSize;
+    void zoom() {
+        float zoomSpeed = CameraVars.zoomSpeedBase * currentCamera.orthographicSize;
 
         Touch touchZero = Input.GetTouch(0);
         Touch touchOne = Input.GetTouch(1);
@@ -136,13 +143,15 @@ public class InputHandling : MonoBehaviour {
         // Change zoom by changing field of view
         currentCamera.orthographicSize += distChange * zoomSpeed;
         // Keeps above 0
-        currentCamera.orthographicSize = Mathf.Max(currentCamera.orthographicSize, 0.1f);
+        currentCamera.orthographicSize = Mathf.Max(currentCamera.orthographicSize, CameraVars.minZoom);
 
-        focusZoom(mousePos);
+        focusZoom();
     }
 
     // Keep point between fingers in same spot as zoom
-    void focusZoom(Vector3 mousePos) {
+    Vector3 screenPosPrev;
+    Vector3 worldPosPrev;
+    void focusZoom() {
         // If zoom is starting:
         if (numTouchesLastFrame != Input.touchCount) {
             screenPosPrev = mousePos;
@@ -156,19 +165,20 @@ public class InputHandling : MonoBehaviour {
         Vector3 worldPosDiff = worldPosNew - worldPosPrev;
 
         // Handle scrolling while zooming
-        scroll(mousePos);
+        scroll();
 
         // Move camera in accordance with focus
-        currentCamera.transform.position -= worldPosDiff * zoomFocusMultiplier;
+        currentCamera.transform.position -= worldPosDiff * CameraVars.zoomFocusMultiplier;
 
         // Prep next run's vars
         screenPosPrev = mousePos;
         worldPosPrev = currentCamera.ScreenToWorldPoint(screenPosPrev);
     }
 
-            // Move while zooming
-    void scroll(Vector3 mousePos) {
-        if (numTouchesLastFrame != Input.touchCount) {
+    // Scroll camera
+    Vector3 downPos; // Where does click start?
+    void scroll() {
+        if (numTouchesLastFrame != Input.touchCount || scrolling == false) {
             downPos = mousePos;
         }
 
@@ -176,9 +186,10 @@ public class InputHandling : MonoBehaviour {
         Vector3 prevWorld = currentCamera.ScreenToWorldPoint(downPos);
         Vector3 posDiff = new Vector3(mouseWorld.x - prevWorld.x, mouseWorld.y - prevWorld.y, 0);
 
-        currentCamera.transform.position -= posDiff * scrollSpeed;
+        currentCamera.transform.position -= posDiff * CameraVars.scrollSpeed;
 
         downPos = mousePos;
+        scrolling = true;
     }
 
     // Check if click is on ally, if so, select it

@@ -9,7 +9,7 @@ public class Ship : MonoBehaviour {
     // Ship and related ship metrics and controls
     public Rigidbody2D ship;
     Vector2 rotationVector; // Unit vector in direction of rotation
-    bool enabled;
+    bool isEnabled;
     
     // Destination and related destination stuff
     Vector2 destination;
@@ -19,7 +19,6 @@ public class Ship : MonoBehaviour {
     const float maxSpeed = 1.0f;
     const int accelFrames = 60; // Number of frames needed to hit max speed
     const float maxAngSpeed = 60.0f; // Degrees/second
-    const int angAccelFrames = 1; // Number of frames needed to hit max angular velocity
     const int ticsPerTrailSwap = 10;
     
     // Trail details
@@ -56,7 +55,7 @@ public class Ship : MonoBehaviour {
     
     void FixedUpdate() {
     	// Disabled ships do not need to move or do anything
-    	if (enabled == false) return;
+    	if (isEnabled == false) return;
 
         if (ship.rotation > 180) {
             ship.rotation -= 360;
@@ -193,7 +192,7 @@ public class Ship : MonoBehaviour {
 
     // Disables boat: makes invisible and halts "FixedUpdate" method
     public void disable () {
-    	enabled = false;
+    	isEnabled = false;
     	ship.gameObject.GetComponent<SpriteRenderer>().enabled = false;
     	bubbleSpriteR1.enabled = false;
     	bubbleSpriteR2.enabled = false;
@@ -203,7 +202,7 @@ public class Ship : MonoBehaviour {
 
     // Makes visible again and restarts "FixedUpdate" method
     public void enable () {
-    	enabled = true;
+    	isEnabled = true;
     	ship.gameObject.GetComponent<SpriteRenderer>().enabled = true;
     	smallGun.gameObject.GetComponent<SpriteRenderer>().enabled = true;
     	mediumGun.gameObject.GetComponent<SpriteRenderer>().enabled = true;

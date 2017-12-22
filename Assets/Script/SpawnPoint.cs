@@ -11,7 +11,7 @@ public class SpawnPoint : MonoBehaviour {
 		spawnPoint.GetComponent<SpriteRenderer>().enabled = false;
 	}
 
-	public Transform transform () {
+	public Transform getTransform () {
 		return spawnPoint;
 	}
 }
