@@ -1,56 +1,48 @@
 using UnityEngine;
 using System.Collections;
 
-public class Ship : MonoBehaviour {
+public abstract class Ship : MonoBehaviour {
     // Whatever ship is currently selected
     public static Ship activeShip;
-    public bool enemy;
-    
+
     // Ship and related ship metrics and controls
-    public Rigidbody2D ship;
-    Vector2 rotationVector; // Unit vector in direction of rotation
-    bool isEnabled;
+    Rigidbody2D ship;
+    public bool enemy; // true if enemy ship, false if allied
+    public bool isEnabled = false;
+
+    // Constant variables set by ship type class
+    protected float maxSpeed; 		// Max speed of ship
+    protected int accelFrames; 		// Number of frames needed to hit max speed
+    protected float angSpeed; 		// Degrees/second
+    protected int ticsPerTrailSwap; 	// How many tics before swapping trails
+    protected int numGunsS;
+    protected int numGunsM;
+    protected int numGunsL;
     
     // Destination and related destination stuff
     Vector2 destination;
-    float destinationAngle;
-    
-    // Const statistics of individual ship
-    const float maxSpeed = 1.0f;
-    const int accelFrames = 60; // Number of frames needed to hit max speed
-    const float maxAngSpeed = 60.0f; // Degrees/second
-    const int ticsPerTrailSwap = 10;
     
     // Trail details
-    GameObject bubbleTrail1;
-    GameObject bubbleTrail2;
-    SpriteRenderer bubbleSpriteR1;
-    SpriteRenderer bubbleSpriteR2;
+    protected GameObject[] trails;
+    protected int numTrails;
+    protected int activeTrail; // index of active trail, == numTrails for none
     bool isThrust;
-    static int ticsPerSwap = 0;
-    static int activeTrail = 0; // 1 for bubbleTrail1, 2 for 2, 0 for neither
 
     // Gun details
-    public Gun smallGun;
-    public Gun mediumGun;
-    GameObject gunTarget;
-    
-    void Start () {
-    	// Set up ship details
-        ship = GetComponent<Rigidbody2D>();
-        destination = ship.position;
-        if (!enemy) activeShip = this;
+    protected Gun[] gunsS;
+    protected Gun[] gunsM;
+    protected Gun[] gunsL;
+    GameObject target;
 
-        // Record bubble trails
-        bubbleTrail1 = transform.GetChild(0).gameObject;
-        bubbleSpriteR1 = bubbleTrail1.GetComponent<SpriteRenderer>();
-        bubbleTrail2 = transform.GetChild(1).gameObject;
-        bubbleSpriteR2 = bubbleTrail2.GetComponent<SpriteRenderer>();
+    public abstract void newShip();
 
-        // Record ship gun details
-        gunTarget = null;
+    void Awake () {
+    	setup();
+    }
 
-        enable();
+    protected void setup() {
+    	ship = GetComponent<Rigidbody2D>();
+    	destination = ship.position;
     }
     
     void FixedUpdate() {
@@ -76,6 +68,8 @@ public class Ship : MonoBehaviour {
         }
     }
     
+    Vector2 rotationVector; // Unit vector in direction of rotation
+    float destinationAngle; // The angle of our destination
     private void rotate() {
         Vector2 destinationDiff = destination - ship.position; // Destination in relation to ship
         destinationAngle = Vector2.SignedAngle(Vector2.up, destinationDiff);
@@ -94,15 +88,15 @@ public class Ship : MonoBehaviour {
         
         } else if (heading < 0) {
             // Turn negative (clockwise)
-            ship.angularVelocity = -maxAngSpeed * (ship.velocity.magnitude / maxSpeed);
+            ship.angularVelocity = -angSpeed * (ship.velocity.magnitude / maxSpeed);
         } else if (heading > 0) {
             // Turn positive (counterclockwise)
-            ship.angularVelocity = maxAngSpeed * (ship.velocity.magnitude / maxSpeed);;
+            ship.angularVelocity = angSpeed * (ship.velocity.magnitude / maxSpeed);;
         } else {
             ship.angularVelocity = 0;
         }
     }
-    
+
     private void thrust() {
         // Calculate our rotationVector
         rotationVector.x = -Mathf.Sin(ship.rotation * Mathf.Deg2Rad);
@@ -128,7 +122,8 @@ public class Ship : MonoBehaviour {
             // Move forward
             isThrust = true;
             if (ship.velocity.magnitude < maxSpeed) {
-                Vector2 newVelocity = ship.velocity.magnitude * rotationVector + (maxSpeed / accelFrames) * rotationVector;
+                Vector2 newVelocity = ship.velocity.magnitude * rotationVector + (maxSpeed
+                	/ accelFrames) * rotationVector;
                 if (newVelocity.magnitude > maxSpeed) {
                     newVelocity = maxSpeed * rotationVector;
                 }
@@ -141,28 +136,29 @@ public class Ship : MonoBehaviour {
     }
     
     // Handles bubble trail behind ship
+    int ticsPerSwap = 0;
     private void trail() {
         if (isThrust) {
+        	// If no trails active, set last trail to active so the first trail will be activated next
+        	if (activeTrail == numTrails) activeTrail--;
         	// If its been ticsPerSwap tics, swap trail
             if (ticsPerSwap >= ticsPerTrailSwap) {
                 ticsPerSwap = 0;
-                if (activeTrail == 1 || activeTrail == 0) {
-                    bubbleSpriteR1.enabled = false;
-                    bubbleSpriteR2.enabled = true;
-                    activeTrail = 2;
-                } else {
-                    bubbleSpriteR1.enabled = true;
-                    bubbleSpriteR2.enabled = false;
-                    activeTrail = 1;
-                }
+                // Disable active trail
+                trails[activeTrail++].GetComponent<SpriteRenderer>().enabled = false;
+                if (activeTrail >= numTrails) activeTrail = 0;
+                // Enabled new trail
+                trails[activeTrail].GetComponent<SpriteRenderer>().enabled = true;
             } else {
                 ticsPerSwap++;
             }
         // If no thrust, don't show either trail
         } else {
-            activeTrail = 0;
-            bubbleSpriteR1.enabled = false;
-            bubbleSpriteR2.enabled = false;
+        	if (activeTrail < numTrails) {
+            	trails[activeTrail].GetComponent<SpriteRenderer>().enabled = false;
+            }
+            // activeTrail == numTrails means no trail active
+            activeTrail = numTrails;
         }
     }
     
@@ -179,10 +175,17 @@ public class Ship : MonoBehaviour {
     }
 
     // Instructs guns to target a given GameObject
-    public void setGunTarget (GameObject newGunTarget) {
-    	gunTarget = newGunTarget;
-    	smallGun.setTarget(gunTarget);
-    	mediumGun.setTarget(gunTarget);
+    public void setTarget (GameObject newTarget) {
+    	target = newTarget;
+    	for (int i = 0; i < numGunsS; i++) {
+    		gunsS[i].setTarget(newTarget);
+    	}
+    	for (int i = 0; i < numGunsM; i++) {
+    		gunsM[i].setTarget(newTarget);
+    	}
+    	for (int i = 0; i < numGunsL; i++) {
+    		gunsL[i].setTarget(newTarget);
+    	}
     }
 
     // Returns ship GameObject
@@ -194,17 +197,22 @@ public class Ship : MonoBehaviour {
     public void disable () {
     	isEnabled = false;
     	ship.gameObject.GetComponent<SpriteRenderer>().enabled = false;
-    	bubbleSpriteR1.enabled = false;
-    	bubbleSpriteR2.enabled = false;
-    	smallGun.gameObject.GetComponent<SpriteRenderer>().enabled = false;
-    	mediumGun.gameObject.GetComponent<SpriteRenderer>().enabled = false;
     }
 
     // Makes visible again and restarts "FixedUpdate" method
     public void enable () {
     	isEnabled = true;
     	ship.gameObject.GetComponent<SpriteRenderer>().enabled = true;
-    	smallGun.gameObject.GetComponent<SpriteRenderer>().enabled = true;
-    	mediumGun.gameObject.GetComponent<SpriteRenderer>().enabled = true;
-    }
+    	for (int i = 0; i < numGunsS; i++) {
+    		gunsS[i].enable();
+    	}
+    	for (int i = 0; i < numGunsM; i++) {
+    		gunsM[i].enable();
+    	}
+    	for (int i = 0; i < numGunsL; i++) {
+    		gunsL[i].enable();
+    	}
+    	
+    	destination = ship.position;
+	}
 }

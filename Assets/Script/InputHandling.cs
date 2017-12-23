@@ -11,16 +11,14 @@ public class InputHandling : MonoBehaviour {
     int numTouchesLastFrame;
 
     // Spawning variables
-    public Ship baseShip;
-    public Ship baseEnemy;
     Ship[] allShips;
     Ship[] allEnemies;
 
     private int numShips = 0;
     private int numEnemies = 0;
 
-    public Transform spawnAllies;
-    public Transform spawnEnemies;
+    public SpawnPoint spawnAllies;
+    public SpawnPoint spawnEnemies;
     bool canClick = true;
     
     // Spawning consts
@@ -31,8 +29,16 @@ public class InputHandling : MonoBehaviour {
         currentCamera = GetComponent<Camera>();
         allShips = new Ship[maxShips];
         allEnemies = new Ship[maxShips];
-        baseShip.disable();
-        baseEnemy.disable();
+
+        Vector3 allyPos = new Vector3(0.0f, 0.0f, 0.0f);
+        Vector3 allyRot = new Vector3(0.0f, 0.0f, 0.0f);
+        spawnAllies = Instantiate(Objects.Spawn, allyPos, 
+            Quaternion.Euler(allyRot)) as SpawnPoint;
+
+        Vector3 enemyPos = new Vector3(8.0f, 5.0f, 0.0f);
+        Vector3 enemyRot = new Vector3(0.0f, 0.0f, 90.0f);
+        spawnEnemies = Instantiate(Objects.Spawn, enemyPos, 
+            Quaternion.Euler(enemyRot)) as SpawnPoint;
     }
 	
 	// Update is called once per frame
@@ -208,7 +214,7 @@ public class InputHandling : MonoBehaviour {
     bool targetEnemy(Vector2 point2D) {
         for (int i = 0; i < numEnemies; i++) {
             if (allEnemies[i].pointOnShip(point2D)) {
-                Ship.activeShip.setGunTarget(allEnemies[i].shipGameObject());
+                Ship.activeShip.setTarget(allEnemies[i].shipGameObject());
                 numTouchesLastFrame = Input.touchCount;
                 return true; // returns true if ally selected
             }
@@ -218,13 +224,17 @@ public class InputHandling : MonoBehaviour {
     
     public void addShip () {
         if (numShips >= maxShips) return;
-        allShips[numShips++] = Instantiate(baseShip, spawnAllies.position, spawnAllies.rotation) as Ship;
+        allShips[numShips++] = Instantiate(Objects.Carrier, spawnAllies.getTransform().position,
+            spawnAllies.getTransform().rotation) as Ship;
+        allShips[numShips - 1].newShip();
         Ship.activeShip = allShips[numShips - 1];
     }
 
     public void addEnemy () {
         if (numEnemies >= maxShips) return;
-        allEnemies[numEnemies++] = Instantiate(baseEnemy, spawnEnemies.position, spawnEnemies.rotation) as Ship;
+        allEnemies[numEnemies++] = Instantiate(Objects.Carrier, spawnEnemies.getTransform().position,
+            spawnEnemies.getTransform().rotation) as Ship;
+        allEnemies[numEnemies - 1].newShip();
     }
     
     // Called when mouse moves on (or off of, below) button. Disables non-button mouse actions

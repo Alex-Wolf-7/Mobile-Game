@@ -47,6 +47,9 @@ TagManager:
   - name: Boat
     uniqueID: 2388063441
     locked: 0
+  - name: Bullet
+    uniqueID: 199152035
+    locked: 0
   - name: Gun
     uniqueID: 856122761
     locked: 0

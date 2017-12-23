@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Gun : MonoBehaviour {
 	public Transform gun;
+	bool isEnabled;
 	GameObject target;
 	float targetDist;
 
@@ -14,6 +15,9 @@ public class Gun : MonoBehaviour {
 	
 	// Update is called once per frame
 	void FixedUpdate () {
+		// If disabled, don't bother animating
+		if (isEnabled == false) return;
+
     	if (target != null) {
     		rotate();
     	} else {
@@ -65,5 +69,15 @@ public class Gun : MonoBehaviour {
 
 	public void setTarget (GameObject newTarget) {
 		target = newTarget;
+	}
+
+	public void disable () {
+		isEnabled = false;
+		GetComponent<SpriteRenderer>().enabled = false;
+	}
+
+	public void enable () {
+		isEnabled = true;
+		GetComponent<SpriteRenderer>().enabled = true;
 	}
 }
