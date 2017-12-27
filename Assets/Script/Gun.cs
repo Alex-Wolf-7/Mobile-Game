@@ -55,11 +55,9 @@ public class Gun : MonoBehaviour {
         		gun.transform.eulerAngles.y, targetAngle);
 
         } else if (angleDiff < 0) {
-        	Debug.Log("<");
             // Turn negative (clockwise)
             gun.transform.eulerAngles = new Vector3(0, 0, gun.transform.eulerAngles.z - angSpeed);
         } else if (angleDiff > 0) {
-        	Debug.Log(">");
             // Turn positive (counterclockwise)
             gun.transform.eulerAngles = new Vector3(0, 0, gun.transform.eulerAngles.z + angSpeed);
         }
