@@ -150,6 +150,7 @@ public class InputHandling : MonoBehaviour {
         currentCamera.orthographicSize += distChange * zoomSpeed;
         // Keeps above 0
         currentCamera.orthographicSize = Mathf.Max(currentCamera.orthographicSize, CameraVars.minZoom);
+        currentCamera.orthographicSize = Mathf.Min(currentCamera.orthographicSize, CameraVars.maxZoom);
 
         focusZoom();
     }
