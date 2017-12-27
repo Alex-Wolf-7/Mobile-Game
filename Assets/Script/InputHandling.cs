@@ -14,11 +14,11 @@ public class InputHandling : MonoBehaviour {
     Ship[] allShips;
     Ship[] allEnemies;
 
-    private int numShips = 0;
-    private int numEnemies = 0;
+    int numShips = 0;
+    int numEnemies = 0;
 
-    public SpawnPoint spawnAllies;
-    public SpawnPoint spawnEnemies;
+    SpawnPoint spawnAllies;
+    SpawnPoint spawnEnemies;
     bool canClick = true;
     
     // Spawning consts
@@ -122,7 +122,9 @@ public class InputHandling : MonoBehaviour {
             }
 
             // If nothing else special to do, move dat boat to click location
-            Ship.activeShip.setDestination(click);
+            if (Ship.activeShip != null) {
+                Ship.activeShip.setDestination(click);
+            }
         }
 
         numTouchesLastFrame = Input.touchCount;
@@ -223,19 +225,27 @@ public class InputHandling : MonoBehaviour {
         return false;
     }
     
-    public void addShip () {
+    public void addCarrier () {
         if (numShips >= maxShips) return;
-        allShips[numShips++] = Instantiate(Objects.Carrier, spawnAllies.getTransform().position,
+        allShips[numShips++] = Instantiate(Objects.CarrierVars.hull, spawnAllies.getTransform().position,
             spawnAllies.getTransform().rotation) as Ship;
-        allShips[numShips - 1].newShip();
+        allShips[numShips - 1].newShip(Objects.CarrierVars);
+        Ship.activeShip = allShips[numShips - 1];
+    }
+
+    public void addCruiser () {
+        if (numShips >= maxShips) return;
+        allShips[numShips++] = Instantiate(Objects.CruiserVars.hull, spawnAllies.getTransform().position,
+            spawnAllies.getTransform().rotation) as Ship;
+        allShips[numShips - 1].newShip(Objects.CruiserVars);
         Ship.activeShip = allShips[numShips - 1];
     }
 
     public void addEnemy () {
         if (numEnemies >= maxShips) return;
-        allEnemies[numEnemies++] = Instantiate(Objects.Carrier, spawnEnemies.getTransform().position,
+        allEnemies[numEnemies++] = Instantiate(Objects.CarrierVars.hull, spawnEnemies.getTransform().position,
             spawnEnemies.getTransform().rotation) as Ship;
-        allEnemies[numEnemies - 1].newShip();
+        allEnemies[numEnemies - 1].newShip(Objects.CarrierVars);
     }
     
     // Called when mouse moves on (or off of, below) button. Disables non-button mouse actions

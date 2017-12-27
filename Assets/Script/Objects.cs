@@ -5,8 +5,8 @@ using UnityEngine;
 // Public static class holding hidden objects. Used for instantiating new objects
 public static class Objects {
 	// list of objects
-	public static Ship Carrier;
-	public static Ship PurpleBox;
+	public static Ship CarrierHull;
+	public static Ship CruiserHull;
 	public static Gun GunS;
 	public static Gun GunM;
 	public static GameObject TrailOne;
@@ -15,4 +15,8 @@ public static class Objects {
 	public static Bullet BulletM;
 	public static SpawnPoint Spawn;
 	public static GameObject Border;
+
+	// list of ship types
+	public static Carrier CarrierVars;
+	public static Cruiser CruiserVars;
 }

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Initialize : MonoBehaviour {
-	public Ship Carrier;
+	public Ship CarrierHull;
+	public Ship CruiserHull;
 	public Gun GunS;
 	public Gun GunM;
 	public GameObject TrailOne;
@@ -15,8 +16,10 @@ public class Initialize : MonoBehaviour {
 
 	// Use this for initialization
 	void Awake () {
-		Objects.Carrier = Carrier;
-		Carrier.disable();
+		Objects.CarrierHull = CarrierHull;
+		CarrierHull.disable();
+		Objects.CruiserHull = CruiserHull;
+		CruiserHull.disable();
 		Objects.GunS = GunS;
 		GunS.disable();
 		Objects.GunM = GunM;
@@ -33,6 +36,10 @@ public class Initialize : MonoBehaviour {
 		// No disable line: disabled by nature
 		Objects.Border = Border;
 		Border.GetComponent<SpriteRenderer>().enabled = false;
+
+		// Ship types
+		Objects.CarrierVars = new Carrier();
+		Objects.CruiserVars = new Cruiser();
 	}
 
 }

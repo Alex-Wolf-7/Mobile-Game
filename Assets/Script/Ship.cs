@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public abstract class Ship : MonoBehaviour {
+public class Ship : MonoBehaviour {
     // Whatever ship is currently selected
     public static Ship activeShip;
 
@@ -35,8 +35,6 @@ public abstract class Ship : MonoBehaviour {
     GameObject target;
 
     protected GameObject border;
-
-    public abstract void newShip();
 
     void Awake () {
     	setup();
@@ -218,5 +216,61 @@ public abstract class Ship : MonoBehaviour {
     	}
     	
     	destination = ship.position;
+	}
+
+
+	// Initialization methods, sets up new ship as as a certain ShipType
+	public void newShip (ShipType shipType) {
+		maxSpeed = shipType.maxSpeed;
+		accelFrames = shipType.accelFrames;
+		angSpeed = shipType.angSpeed;
+		ticsPerTrailSwap = shipType.ticsPerTrailSwap;
+
+		createGuns(shipType);
+		createTrail(shipType);
+		createBorder(shipType);
+		enable();
+	}
+
+	void createGuns (ShipType shipType) {
+		numGunsS = shipType.numGunsS;
+		gunsS = new Gun[numGunsS];
+		for (int i = 0; i < numGunsS; i++) {
+			gunsS[i] = Instantiate(shipType.gunSArray[i], transform);
+			gunsS[i].transform.localPosition = new Vector3(shipType.gunPosS[i, 0], shipType.gunPosS[i, 1], transform.position.z);
+			gunsS[i].transform.rotation = transform.rotation;
+		}
+
+		numGunsM = shipType.numGunsM;
+		gunsM = new Gun[numGunsM];
+		for (int i = 0; i < numGunsM; i++) {
+			gunsM[i] = Instantiate(shipType.gunMArray[i], transform);
+			gunsM[i].transform.localPosition = new Vector3(shipType.gunPosM[i, 0], shipType.gunPosM[i, 1], transform.position.z);
+			gunsM[i].transform.rotation = transform.rotation;
+		}
+
+		numGunsL = shipType.numGunsL;
+		gunsL = new Gun[numGunsL];
+		for (int i = 0; i < numGunsL; i++) {
+			gunsL[i] = Instantiate(shipType.gunLArray[i], transform);
+			gunsL[i].transform.localPosition = new Vector3(shipType.gunPosL[i, 0], shipType.gunPosL[i, 1], transform.position.z);
+			gunsL[i].transform.transform.rotation = transform.rotation;
+		}
+	}
+
+	void createTrail (ShipType shipType) {
+		numTrails = shipType.numTrails;
+		trails = new GameObject[numTrails];
+		for (int i = 0; i < numTrails; i++) {
+			trails[i] = Instantiate(shipType.trailArray[i], transform);
+			trails[i].transform.localPosition = new Vector3(shipType.trailPos[i, 0], shipType.trailPos[i, 1], transform.position.z);
+			trails[i].transform.rotation = transform.rotation;
+			trails[i].transform.localScale = new Vector3(shipType.trailScale[0], shipType.trailScale[1], 1.0f);
+		}
+	}
+
+	void createBorder (ShipType shipType) {
+		border = Instantiate(Objects.Border, transform);
+		border.transform.localScale = new Vector3(shipType.borderDims[0], shipType.borderDims[1], 1);
 	}
 }
