@@ -14,4 +14,5 @@ public static class Objects {
 	public static Bullet BulletS;
 	public static Bullet BulletM;
 	public static SpawnPoint Spawn;
+	public static GameObject Border;
 }

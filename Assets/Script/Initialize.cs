@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Initialize : MonoBehaviour {
 	public Ship Carrier;
-	public Ship PurpleBox;
 	public Gun GunS;
 	public Gun GunM;
 	public GameObject TrailOne;
@@ -12,6 +11,7 @@ public class Initialize : MonoBehaviour {
 	public Bullet BulletS;
 	public Bullet BulletM;
 	public SpawnPoint Spawn;
+	public GameObject Border;
 
 	// Use this for initialization
 	void Awake () {
@@ -31,6 +31,8 @@ public class Initialize : MonoBehaviour {
 		BulletM.disable();
 		Objects.Spawn = Spawn;
 		// No disable line: disabled by nature
+		Objects.Border = Border;
+		Border.GetComponent<SpriteRenderer>().enabled = false;
 	}
 
 }

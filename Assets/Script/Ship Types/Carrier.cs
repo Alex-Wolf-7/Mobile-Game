@@ -13,6 +13,7 @@ public class Carrier : Ship {
 
 		createGuns();
 		createTrail();
+		createBorder();
 		enable();
 	}
 
@@ -50,5 +51,10 @@ public class Carrier : Ship {
 			trails[i].transform.localPosition = new Vector3(CarrierVars.trailPos[i, 0], CarrierVars.trailPos[i, 1], transform.position.z);
 			trails[i].transform.rotation = transform.rotation;
 		}
+	}
+
+	void createBorder () {
+		border = Instantiate(Objects.Border, transform);
+		border.transform.localScale = new Vector3(CarrierVars.borderDims[0], CarrierVars.borderDims[1], 1);
 	}
 }

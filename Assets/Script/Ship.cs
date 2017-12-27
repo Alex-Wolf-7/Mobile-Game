@@ -34,6 +34,8 @@ public abstract class Ship : MonoBehaviour {
     protected Gun[] gunsL;
     GameObject target;
 
+    protected GameObject border;
+
     public abstract void newShip();
 
     void Awake () {
@@ -58,6 +60,8 @@ public abstract class Ship : MonoBehaviour {
         if (destination != ship.position) {
             move();
         }
+
+        border.GetComponent<SpriteRenderer>().enabled = (Ship.activeShip == this);
     }
     
     private void move() {

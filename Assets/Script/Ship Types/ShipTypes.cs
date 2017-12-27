@@ -10,11 +10,11 @@ public static class CarrierVars {
 
     public static readonly int numGunsS = 1;
     public static readonly Gun[] gunSArray = new Gun[] {Objects.GunS};
-    public static readonly float[,] gunPosS = new float[,] {{0.605F, 1.81F}};
+    public static readonly float[,] gunPosS = new float[,] {{0.605f, 1.81f}};
 
     public static readonly int numGunsM = 1;
     public static readonly Gun[] gunMArray = new Gun[] {Objects.GunM};
-	public static readonly float[,] gunPosM = new float[,] {{-0.265F, -2.0F}};
+	public static readonly float[,] gunPosM = new float[,] {{-0.265f, -2.0f}};
 
     public static readonly int numGunsL = 0;
     public static readonly Gun[] gunLArray = new Gun[] {};
@@ -22,5 +22,7 @@ public static class CarrierVars {
 
     public static readonly int numTrails = 2;
     public static readonly GameObject[] trailArray = new GameObject[] {Objects.TrailOne, Objects.TrailTwo};
-    public static readonly float[,] trailPos = new float[,] {{0.0F, -3.0F}, {0.0F, -3.0F}};
+    public static readonly float[,] trailPos = new float[,] {{0.0f, -3.0f}, {0.0f, -3.0f}};
+
+    public static readonly float[] borderDims = new float[] {0.4f, 0.55f};
 }
