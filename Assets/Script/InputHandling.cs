@@ -227,25 +227,28 @@ public class InputHandling : MonoBehaviour {
     
     public void addCarrier () {
         if (numShips >= maxShips) return;
+        GunType[,] allGuns = new GunType[,] {{Objects.GunSVars}, {Objects.GunMVars}};
         allShips[numShips++] = Instantiate(Objects.CarrierVars.hull, spawnAllies.getTransform().position,
             spawnAllies.getTransform().rotation) as Ship;
-        allShips[numShips - 1].newShip(Objects.CarrierVars);
+        allShips[numShips - 1].newShip(Objects.CarrierVars, allGuns);
         Ship.activeShip = allShips[numShips - 1];
     }
 
     public void addCruiser () {
         if (numShips >= maxShips) return;
+        GunType[,] allGuns = new GunType[,] {{Objects.GunSVars, Objects.GunSVars}};
         allShips[numShips++] = Instantiate(Objects.CruiserVars.hull, spawnAllies.getTransform().position,
             spawnAllies.getTransform().rotation) as Ship;
-        allShips[numShips - 1].newShip(Objects.CruiserVars);
+        allShips[numShips - 1].newShip(Objects.CruiserVars, allGuns);
         Ship.activeShip = allShips[numShips - 1];
     }
 
     public void addEnemy () {
         if (numEnemies >= maxShips) return;
+        GunType[,] allGuns = new GunType[,] {{Objects.GunSVars}, {Objects.GunMVars}};
         allEnemies[numEnemies++] = Instantiate(Objects.CarrierVars.hull, spawnEnemies.getTransform().position,
             spawnEnemies.getTransform().rotation) as Ship;
-        allEnemies[numEnemies - 1].newShip(Objects.CarrierVars);
+        allEnemies[numEnemies - 1].newShip(Objects.CarrierVars, allGuns);
     }
     
     // Called when mouse moves on (or off of, below) button. Disables non-button mouse actions

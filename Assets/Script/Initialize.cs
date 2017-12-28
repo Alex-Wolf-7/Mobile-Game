@@ -40,6 +40,10 @@ public class Initialize : MonoBehaviour {
 		// Ship types
 		Objects.CarrierVars = new Carrier();
 		Objects.CruiserVars = new Cruiser();
+
+		// Gun Types
+		Objects.GunSVars = new GunS();
+		Objects.GunMVars = new GunM();
 	}
 
 }

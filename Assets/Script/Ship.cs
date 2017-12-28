@@ -220,23 +220,24 @@ public class Ship : MonoBehaviour {
 
 
 	// Initialization methods, sets up new ship as as a certain ShipType
-	public void newShip (ShipType shipType) {
+	public void newShip (ShipType shipType, GunType[,] allGuns) {
 		maxSpeed = shipType.maxSpeed;
 		accelFrames = shipType.accelFrames;
 		angSpeed = shipType.angSpeed;
 		ticsPerTrailSwap = shipType.ticsPerTrailSwap;
 
-		createGuns(shipType);
+		createGuns(shipType, allGuns);
 		createTrail(shipType);
 		createBorder(shipType);
 		enable();
 	}
 
-	void createGuns (ShipType shipType) {
+	void createGuns (ShipType shipType, GunType[,] allGuns) {
 		numGunsS = shipType.numGunsS;
 		gunsS = new Gun[numGunsS];
 		for (int i = 0; i < numGunsS; i++) {
-			gunsS[i] = Instantiate(shipType.gunSArray[i], transform);
+			gunsS[i] = Instantiate(allGuns[0, i].gun, transform);
+			gunsS[i].newGun(allGuns[0, i]);
 			gunsS[i].transform.localPosition = new Vector3(shipType.gunPosS[i, 0], shipType.gunPosS[i, 1], transform.position.z);
 			gunsS[i].transform.rotation = transform.rotation;
 		}
@@ -244,7 +245,8 @@ public class Ship : MonoBehaviour {
 		numGunsM = shipType.numGunsM;
 		gunsM = new Gun[numGunsM];
 		for (int i = 0; i < numGunsM; i++) {
-			gunsM[i] = Instantiate(shipType.gunMArray[i], transform);
+			gunsM[i] = Instantiate(allGuns[1, i].gun, transform);
+			gunsM[i].newGun(allGuns[1, i]);
 			gunsM[i].transform.localPosition = new Vector3(shipType.gunPosM[i, 0], shipType.gunPosM[i, 1], transform.position.z);
 			gunsM[i].transform.rotation = transform.rotation;
 		}
@@ -252,7 +254,8 @@ public class Ship : MonoBehaviour {
 		numGunsL = shipType.numGunsL;
 		gunsL = new Gun[numGunsL];
 		for (int i = 0; i < numGunsL; i++) {
-			gunsL[i] = Instantiate(shipType.gunLArray[i], transform);
+			gunsL[i] = Instantiate(allGuns[2, i].gun, transform);
+			gunsL[i].newGun(allGuns[2, i]);
 			gunsL[i].transform.localPosition = new Vector3(shipType.gunPosL[i, 0], shipType.gunPosL[i, 1], transform.position.z);
 			gunsL[i].transform.transform.rotation = transform.rotation;
 		}

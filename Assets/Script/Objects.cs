@@ -19,4 +19,8 @@ public static class Objects {
 	// list of ship types
 	public static Carrier CarrierVars;
 	public static Cruiser CruiserVars;
+
+	// list of gun types
+	public static GunS GunSVars;
+	public static GunM GunMVars;
 }

@@ -11,13 +11,6 @@ public static class CameraVars {
     public const float zoomFocusMultiplier = 1.3f; 	// The rate which the camera moves towards the target
 }
 
-public static class ShipVars {
-	public const float maxSpeed = 1.0f; 		// Max speed of ship
-    public const int accelFrames = 60; 		// Number of frames needed to hit max speed
-    public const float angSpeed = 60.0f; 		// Degrees/second
-    public const int ticsPerTrailSwap = 10; 	// How many tics before swapping trails
-}
-
 public static class BulletVars {
 	public const float flightSpeed = 0.1f;
 }

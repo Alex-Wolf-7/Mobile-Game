@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Gun : MonoBehaviour {
-	public Transform gun;
 	bool isEnabled;
 	GameObject target;
 	float targetDist;
 
-	const float angSpeed = 3.0f;
+	char size;
+	float angSpeed;
 
 	void Start () {
 	}
@@ -29,16 +29,16 @@ public class Gun : MonoBehaviour {
 	private void rotate() {
 		// Sets rotation to what it was last frame: negates effect of parent rotating child
 		if (rotation != -1) { // negatives not possible for eulerAngle, thus means null
-			gun.transform.eulerAngles = new Vector3(0, 0, rotation);
+			transform.eulerAngles = new Vector3(0, 0, rotation);
 		}
 
-		float gunAngle = gun.transform.eulerAngles.z;
+		float gunAngle = transform.eulerAngles.z;
 		if (gunAngle > 180) {
 			gunAngle -= 360;
 		}
 
-        Vector2 targetDiff = new Vector2(target.transform.position.x - gun.transform.position.x,
-        	target.transform.position.y - gun.transform.position.y); // Destination in relation to gun
+        Vector2 targetDiff = new Vector2(target.transform.position.x - transform.position.x,
+        	target.transform.position.y - transform.position.y); // Destination in relation to gun
 
         float targetAngle = Vector2.SignedAngle(Vector2.up, targetDiff);
         
@@ -51,18 +51,18 @@ public class Gun : MonoBehaviour {
 
         // If super close to correct angle, just snap to correct angle
         if (Mathf.Abs(angleDiff) < angSpeed) {
-        	gun.transform.eulerAngles = new Vector3(gun.transform.eulerAngles.x,
-        		gun.transform.eulerAngles.y, targetAngle);
+        	transform.eulerAngles = new Vector3(transform.eulerAngles.x,
+        		transform.eulerAngles.y, targetAngle);
 
         } else if (angleDiff < 0) {
             // Turn negative (clockwise)
-            gun.transform.eulerAngles = new Vector3(0, 0, gun.transform.eulerAngles.z - angSpeed);
+            transform.eulerAngles = new Vector3(0, 0, transform.eulerAngles.z - angSpeed);
         } else if (angleDiff > 0) {
             // Turn positive (counterclockwise)
-            gun.transform.eulerAngles = new Vector3(0, 0, gun.transform.eulerAngles.z + angSpeed);
+            transform.eulerAngles = new Vector3(0, 0, transform.eulerAngles.z + angSpeed);
         }
 
-        rotation = gun.transform.eulerAngles.z; // Record rotation
+        rotation = transform.eulerAngles.z; // Record rotation
     }
 
 	public void setTarget (GameObject newTarget) {
@@ -77,5 +77,11 @@ public class Gun : MonoBehaviour {
 	public void enable () {
 		isEnabled = true;
 		GetComponent<SpriteRenderer>().enabled = true;
+	}
+
+	// Initialize methods, sets up specifics for each new gun
+	public void newGun(GunType gunType) {
+		size = gunType.size;
+		angSpeed = gunType.angSpeed;
 	}
 }
