@@ -11,11 +11,11 @@ public class InputHandling : MonoBehaviour {
     int numTouchesLastFrame;
 
     // Spawning variables
-    Ship[] allShips;
-    Ship[] allEnemies;
+    public Ship[] allShips;
+    public Ship[] allEnemies;
 
-    int numShips = 0;
-    int numEnemies = 0;
+    public int numShips = 0;
+    public int numEnemies = 0;
 
     SpawnPoint spawnAllies;
     SpawnPoint spawnEnemies;
@@ -24,11 +24,14 @@ public class InputHandling : MonoBehaviour {
     // Spawning consts
     const int maxShips = 10;
     
+    void Awake () {
+        allShips = new Ship[maxShips];
+        allEnemies = new Ship[maxShips];
+    }
+
 	// Use this for initialization
 	void Start () {
         currentCamera = GetComponent<Camera>();
-        allShips = new Ship[maxShips];
-        allEnemies = new Ship[maxShips];
 
         Vector3 allyPos = new Vector3(0.0f, 0.0f, 0.0f);
         Vector3 allyRot = new Vector3(0.0f, 0.0f, 0.0f);
@@ -227,28 +230,34 @@ public class InputHandling : MonoBehaviour {
     
     public void addCarrier () {
         if (numShips >= maxShips) return;
-        GunType[,] allGuns = new GunType[,] {{Objects.GunSVars}, {Objects.GunMVars}};
+        GunType[] smallGuns = new GunType[] {Objects.GunSVars};
+        GunType[] mediumGuns = new GunType[] {Objects.GunMVars};
+        GunType[] largeGuns = new GunType[] {};
         allShips[numShips++] = Instantiate(Objects.CarrierVars.hull, spawnAllies.getTransform().position,
             spawnAllies.getTransform().rotation) as Ship;
-        allShips[numShips - 1].newShip(Objects.CarrierVars, allGuns);
+        allShips[numShips - 1].newShip(Objects.CarrierVars, smallGuns, mediumGuns, largeGuns);
         Ship.activeShip = allShips[numShips - 1];
     }
 
     public void addCruiser () {
         if (numShips >= maxShips) return;
-        GunType[,] allGuns = new GunType[,] {{Objects.GunSVars, Objects.GunSVars}};
+        GunType[] smallGuns = new GunType[] {Objects.GunSVars, Objects.GunSVars};
+        GunType[] mediumGuns = new GunType[] {};
+        GunType[] largeGuns = new GunType[] {};
         allShips[numShips++] = Instantiate(Objects.CruiserVars.hull, spawnAllies.getTransform().position,
             spawnAllies.getTransform().rotation) as Ship;
-        allShips[numShips - 1].newShip(Objects.CruiserVars, allGuns);
+        allShips[numShips - 1].newShip(Objects.CruiserVars, smallGuns, mediumGuns, largeGuns);
         Ship.activeShip = allShips[numShips - 1];
     }
 
     public void addEnemy () {
         if (numEnemies >= maxShips) return;
-        GunType[,] allGuns = new GunType[,] {{Objects.GunSVars}, {Objects.GunMVars}};
+        GunType[] smallGuns = new GunType[] {Objects.GunSVars};
+        GunType[] mediumGuns = new GunType[] {Objects.GunMVars};
+        GunType[] largeGuns = new GunType[] {};
         allEnemies[numEnemies++] = Instantiate(Objects.CarrierVars.hull, spawnEnemies.getTransform().position,
             spawnEnemies.getTransform().rotation) as Ship;
-        allEnemies[numEnemies - 1].newShip(Objects.CarrierVars, allGuns);
+        allEnemies[numEnemies - 1].newShip(Objects.CarrierVars, smallGuns, mediumGuns, largeGuns);
     }
     
     // Called when mouse moves on (or off of, below) button. Disables non-button mouse actions

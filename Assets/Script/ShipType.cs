@@ -41,15 +41,12 @@ public class Carrier : ShipType {
         ticsPerTrailSwap = 10; 	// How many tics before swapping trails
 
         numGunsS = 1;
-        gunSArray = new Gun[] {Objects.GunS};
         gunPosS = new float[,] {{0.605f, 1.81f}};
 
         numGunsM = 1;
-        gunMArray = new Gun[] {Objects.GunM};
         gunPosM = new float[,] {{-0.265f, -2.0f}};
 
         numGunsL = 0;
-        gunLArray = new Gun[] {};
         gunPosL = new float[,] {{}};
 
         numTrails = 2;

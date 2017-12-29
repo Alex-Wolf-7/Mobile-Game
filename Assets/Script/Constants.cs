@@ -14,3 +14,7 @@ public static class CameraVars {
 public static class GunVars {
 	public const int overShoot = 15;
 }
+
+public static class ShipVars {
+	public const float spawnDist = 5.0f;
+}
