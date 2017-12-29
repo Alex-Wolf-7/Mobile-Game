@@ -11,6 +11,6 @@ public static class CameraVars {
     public const float zoomFocusMultiplier = 1.3f; 	// The rate which the camera moves towards the target
 }
 
-public static class BulletVars {
-	public const float flightSpeed = 0.1f;
+public static class GunVars {
+	public const int overShoot = 15;
 }

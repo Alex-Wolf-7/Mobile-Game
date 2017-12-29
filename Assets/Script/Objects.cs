@@ -11,8 +11,8 @@ public static class Objects {
 	public static Gun GunM;
 	public static GameObject TrailOne;
 	public static GameObject TrailTwo;
-	public static Bullet BulletS;
-	public static Bullet BulletM;
+	public static BulletS bulletS;
+	public static BulletM bulletM;
 	public static SpawnPoint Spawn;
 	public static GameObject Border;
 

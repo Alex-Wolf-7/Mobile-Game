@@ -776,7 +776,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6427229a27e1d4c0aadbe6d20de9db50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gun: {fileID: 465391316}
 --- !u!1 &472317057
 GameObject:
   m_ObjectHideFlags: 0
@@ -1254,7 +1253,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1365991936}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6cd5689b29d064672a55f8c5dd33116b, type: 3}
+  m_Script: {fileID: 11500000, guid: e909d2eeacf724a2eba494917f3f2427, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!212 &1365991938
@@ -1634,8 +1633,8 @@ MonoBehaviour:
   GunM: {fileID: 1831284684}
   TrailOne: {fileID: 579425630}
   TrailTwo: {fileID: 1077960736}
-  BulletS: {fileID: 1365991937}
-  BulletM: {fileID: 2079396621}
+  bulletS: {fileID: 1365991937}
+  bulletM: {fileID: 2079396621}
   Spawn: {fileID: 1831692785}
   Border: {fileID: 438039468}
 --- !u!1 &1831284681
@@ -1723,7 +1722,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6427229a27e1d4c0aadbe6d20de9db50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gun: {fileID: 1831284682}
 --- !u!1 &1831692784
 GameObject:
   m_ObjectHideFlags: 0
@@ -2004,7 +2002,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2079396620}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6cd5689b29d064672a55f8c5dd33116b, type: 3}
+  m_Script: {fileID: 11500000, guid: 1c7230a3042ea4245b72fd8bf53d23da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!212 &2079396622

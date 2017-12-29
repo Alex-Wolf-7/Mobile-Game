@@ -9,8 +9,8 @@ public class Initialize : MonoBehaviour {
 	public Gun GunM;
 	public GameObject TrailOne;
 	public GameObject TrailTwo;
-	public Bullet BulletS;
-	public Bullet BulletM;
+	public BulletS bulletS;
+	public BulletM bulletM;
 	public SpawnPoint Spawn;
 	public GameObject Border;
 
@@ -28,10 +28,10 @@ public class Initialize : MonoBehaviour {
 		TrailOne.GetComponent<SpriteRenderer>().enabled = false;
 		Objects.TrailTwo = TrailTwo;
 		TrailTwo.GetComponent<SpriteRenderer>().enabled = false;
-		Objects.BulletS = BulletS;
-		BulletS.disable();
-		Objects.BulletM = BulletM;
-		BulletM.disable();
+		Objects.bulletS = bulletS;
+		bulletS.disable();
+		Objects.bulletM = bulletM;
+		bulletM.disable();
 		Objects.Spawn = Spawn;
 		// No disable line: disabled by nature
 		Objects.Border = Border;

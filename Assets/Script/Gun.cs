@@ -10,6 +10,12 @@ public class Gun : MonoBehaviour {
 	char size;
 	float angSpeed;
 
+	Bullet bullet;
+	float range;
+	int framesPerShot;
+
+	bool locked = false;
+
 	void Start () {
 	}
 	
@@ -17,9 +23,17 @@ public class Gun : MonoBehaviour {
 	void FixedUpdate () {
 		// If disabled, don't bother animating
 		if (isEnabled == false) return;
-
+		
     	if (target != null) {
+    		// Distance between gun and target
+			targetDist = (target.transform.position - transform.position).magnitude;
+
+			// Rotate to point at target
     		rotate();
+
+    		if (targetDist <= range && locked) {
+            	shoot();
+        	}
     	} else {
     		rotation = -1; // mark rotation as linked to ship
     	}
@@ -53,13 +67,18 @@ public class Gun : MonoBehaviour {
         if (Mathf.Abs(angleDiff) < angSpeed) {
         	transform.eulerAngles = new Vector3(transform.eulerAngles.x,
         		transform.eulerAngles.y, targetAngle);
+        	locked = true;
 
         } else if (angleDiff < 0) {
             // Turn negative (clockwise)
             transform.eulerAngles = new Vector3(0, 0, transform.eulerAngles.z - angSpeed);
+            locked = false;
         } else if (angleDiff > 0) {
             // Turn positive (counterclockwise)
             transform.eulerAngles = new Vector3(0, 0, transform.eulerAngles.z + angSpeed);
+            locked = false;
+        } else {
+        	locked = false;
         }
 
         rotation = transform.eulerAngles.z; // Record rotation
@@ -67,6 +86,20 @@ public class Gun : MonoBehaviour {
 
 	public void setTarget (GameObject newTarget) {
 		target = newTarget;
+	}
+
+	// Fires a bullet in the direction of target
+	int framesUntilShoot = 0;
+	void shoot () {
+		if (framesUntilShoot <= 0) {
+			if (targetDist <= range && locked) {
+				Bullet newBullet = Instantiate(bullet, transform.position, transform.rotation);
+				newBullet.setDestination(target.transform.position);
+				framesUntilShoot = framesPerShot;
+			}
+        } else {
+        	framesUntilShoot--;
+        }
 	}
 
 	public void disable () {
@@ -83,5 +116,8 @@ public class Gun : MonoBehaviour {
 	public void newGun(GunType gunType) {
 		size = gunType.size;
 		angSpeed = gunType.angSpeed;
+		bullet = gunType.bullet;
+		range = gunType.range;
+		framesPerShot = gunType.framesPerShot;
 	}
 }
