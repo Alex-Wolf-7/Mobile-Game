@@ -47,7 +47,9 @@ public class Initialize : MonoBehaviour {
 
 		// Array of allied ships and enemy ships
 		Objects.allShips = new Ship[ShipVars.maxAllies];
+		Objects.numShips = 0;
 		Objects.allEnemies = new Ship[ShipVars.maxEnemies];
+		Objects.numEnemies = 0;
 	}
 
 }

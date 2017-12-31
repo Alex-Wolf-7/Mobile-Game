@@ -26,8 +26,8 @@ public static class Objects {
 
 	public static Ship[] allShips;
 	public static Ship[] allEnemies;
-	public static int numShips = 0;
-	public static int numEnemies = 0;
+	public static int numShips;
+	public static int numEnemies;
 
 	// *******************
 	// * Utility methods *
@@ -73,7 +73,6 @@ public static class Objects {
 
 	// Removes enemy from array of all enemies
 	public static void removeEnemy (Ship enemy) {
-		Debug.Log(allEnemies);
 		int index = numEnemies;
 		for (int i = 0; i < numEnemies; i++) {
 			if (enemy == allEnemies[i]) {
@@ -89,6 +88,5 @@ public static class Objects {
 			allEnemies[i] = allEnemies[i + 1];
 		}
 		allEnemies[numEnemies] = null;
-		Debug.Log(allEnemies);
 	}
 }
