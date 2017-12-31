@@ -41,12 +41,12 @@ public class Carrier : ShipType {
         hull = Objects.CarrierHull;
         maxHealth = 5000.0f;
 
-        maxSpeed = 4.0f; 		// Max speed of ship
-        accelFrames = 200; 		// Number of frames needed to hit max speed
+        maxSpeed = 2.0f; 		// Max speed of ship
+        accelFrames = 100; 		// Number of frames needed to hit max speed
         angSpeed = 30.0f; 		// Degrees/second
         ticsPerTrailSwap = 10; 	// How many tics before swapping trails
 
-        autoRange = 50.0f;
+        autoRange = 40.0f;
 
         numGunsS = 1;
         gunPosS = new float[,] {{0.605f, 1.81f}};

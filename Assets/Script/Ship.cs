@@ -76,11 +76,11 @@ public class Ship : MonoBehaviour {
     private void move() {
     	if (tracking) {
     		bool firing = isFiring();
-    		if (!firing) {
+    		if (!firing && target != null) {
     			destination = target.transform.position;
     			isThrust = true;
     		} else {
-    			destination = ship.position;
+    			isThrust = false;
     		}
     	}
 
@@ -182,6 +182,7 @@ public class Ship : MonoBehaviour {
 
     // Slows ship after crossing destination
     void slow () {
+        ship.angularVelocity = 0.0f;
     	if (ship.velocity == Vector2.zero) return;
 
     	ship.velocity -= rotationVector * (maxSpeed / accelFrames);
@@ -254,7 +255,7 @@ public class Ship : MonoBehaviour {
     // Targets the nearest boat without interrupting steering
     public void setTargetNearest () {
     	// If tracking a specific ship, don't autotarget
-    	if (tracking && target != null) return;
+    	if (tracking && target != null && !enemy) return;
 
     	// Find the closest ship that is the opposite faction as this
     	float closestDist = autoRange;
@@ -287,7 +288,8 @@ public class Ship : MonoBehaviour {
     	}
 
     	setTarget(closest);
-    	tracking = false; // Above method sets tracking to true, but autotarget should keep previous heading
+    	// Enemies should move towards autotargeted ships, allies should not
+    	tracking = enemy;
     }
 
     bool isFiring () {
