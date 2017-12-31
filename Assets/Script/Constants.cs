@@ -17,4 +17,6 @@ public static class GunVars {
 
 public static class ShipVars {
 	public const float spawnDist = 5.0f;
+	public const int maxAllies = 10;
+	public const int maxEnemies = 20;
 }

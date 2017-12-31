@@ -4,6 +4,7 @@ using UnityEngine;
 
 public abstract class ShipType {
     public Ship hull;
+    public float maxHealth;
 
 	public float maxSpeed; 			// Max speed of ship
     public int accelFrames; 		// Number of frames needed to hit max speed
@@ -34,6 +35,7 @@ public abstract class ShipType {
 public class Carrier : ShipType {
     public Carrier () {
         hull = Objects.CarrierHull;
+        maxHealth = 5000.0f;
 
         maxSpeed = 4.0f; 		// Max speed of ship
         accelFrames = 200; 		// Number of frames needed to hit max speed
@@ -62,6 +64,7 @@ public class Carrier : ShipType {
 public class Cruiser : ShipType {
     public Cruiser () {
         hull = Objects.CruiserHull;
+        maxHealth = 2000.0f;
 
         maxSpeed = 4.0f;        // Max speed of ship
         accelFrames = 60;       // Number of frames needed to hit max speed

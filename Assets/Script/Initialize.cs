@@ -44,6 +44,10 @@ public class Initialize : MonoBehaviour {
 		// Gun Types
 		Objects.GunSVars = new GunS();
 		Objects.GunMVars = new GunM();
+
+		// Array of allied ships and enemy ships
+		Objects.allShips = new Ship[ShipVars.maxAllies];
+		Objects.allEnemies = new Ship[ShipVars.maxEnemies];
 	}
 
 }

@@ -17,7 +17,7 @@ public class GunS : GunType {
 		bullet = Objects.bulletS;
 		size = 's';
 		range = 20.0f;
-		framesPerShot = 30;
+		framesPerShot = 15;
 
 		angSpeed = 5.0f;
 	}

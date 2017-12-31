@@ -7,7 +7,9 @@ public abstract class Bullet : MonoBehaviour {
 	Vector3 origin;
 	Vector3 travelVector;
 	bool shot = false;
+	bool enemy;
 
+	protected float damage;
 	protected float flightSpeed;
 	float framesLeft;
 
@@ -23,18 +25,49 @@ public abstract class Bullet : MonoBehaviour {
 		if (framesLeft >= 0) {
 			transform.position += travelVector * flightSpeed;
 			framesLeft -= 1;
+			if (checkCollision()) {
+				destroyBullet();
+			}
 		
 		} else {
-			disable();
-			Destroy(GetComponent<SpriteRenderer>());
-			Destroy(this);
+			destroyBullet();
 		}
 	}
 
+	// Check if collided with enemy or ally
+	bool checkCollision() {
+		if (enemy) {
+			Ship hitShip = Objects.onShip(transform.position);
+			if (hitShip != null) {
+				hitShip.damage(damage);
+				return true;
+			} else {
+				return false;
+			}
+
+		} else {
+			Ship hitEnemy = Objects.onEnemy(transform.position);
+			if (hitEnemy != null) {
+				hitEnemy.damage(damage);
+				return true;
+			
+			} else {
+				return false;
+			}
+		}
+	}
+
+	void destroyBullet () {
+		Destroy(GetComponent<Transform>().gameObject);
+	}
+
 	// Set destination and prepare flight
-	public void setDestination (Vector3 newDest) {
+	// Vector3 newDest: position of enemy at t=0
+	// bool enemy: if bullet is allied or enemy 
+	public void setDestination (Transform newDest, bool firedFromEnemy) {
 		origin = transform.position;
-		destination = newDest;
+		destination = newDest.position;
+		enemy = firedFromEnemy;
 
 		// Find path that must be travelled
 		travelVector = new Vector3(destination.x - origin.x, destination.y - origin.y, 0);

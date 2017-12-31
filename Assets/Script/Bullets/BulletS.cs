@@ -5,5 +5,6 @@ using UnityEngine;
 public class BulletS : Bullet {
 	void Awake () {
 		flightSpeed = 0.2f;
+		damage = 10.0f;
 	}
 }

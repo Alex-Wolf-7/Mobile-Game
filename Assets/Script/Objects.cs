@@ -23,4 +23,72 @@ public static class Objects {
 	// list of gun types
 	public static GunS GunSVars;
 	public static GunM GunMVars;
+
+	public static Ship[] allShips;
+	public static Ship[] allEnemies;
+	public static int numShips = 0;
+	public static int numEnemies = 0;
+
+	// *******************
+	// * Utility methods *
+	// *******************
+	// Checks which ship a point is on
+	public static Ship onShip (Vector2 point) {
+		for (int i = 0; i < numShips; i++) {
+            if (allShips[i].pointOnShip(point)) {
+                return allShips[i];
+            }
+        }
+        return null;
+	}
+
+	// Checks which enemy a point is on
+	public static Ship onEnemy (Vector2 point) {
+		for (int i = 0; i < numEnemies; i++) {
+            if (allEnemies[i].pointOnShip(point)) {
+                return allEnemies[i];
+            }
+        }
+        return null;
+	}
+
+	// Removes ship from array of all ships
+	public static void removeShip (Ship ship) {
+		int index = numShips;  // Impossible value, check to see if it hasn't changed
+		for (int i = 0; i < numShips; i++) {
+			if (ship == allShips[i]) {
+				index = i;
+				break;
+			}
+		}
+		// If index hasn't changed, no matching ships found, some error
+		if (index == numShips) return;
+
+		numShips--;
+		for (int i = index; i + 1 < numShips; i++) {
+			allShips[i] = allShips[i + 1];
+		}
+		allShips[numShips] = null;
+	}
+
+	// Removes enemy from array of all enemies
+	public static void removeEnemy (Ship enemy) {
+		Debug.Log(allEnemies);
+		int index = numEnemies;
+		for (int i = 0; i < numEnemies; i++) {
+			if (enemy == allEnemies[i]) {
+				index = i;
+				break;
+			}
+		}
+		// If index hasn't changed, no matching enemies found, some error
+		if (index == numEnemies) return;
+
+		numEnemies--;
+		for (int i = index; i < numEnemies; i++) {
+			allEnemies[i] = allEnemies[i + 1];
+		}
+		allEnemies[numEnemies] = null;
+		Debug.Log(allEnemies);
+	}
 }

@@ -30,17 +30,16 @@ public class Gun : MonoBehaviour {
 
 			// Rotate to point at target
     		rotate();
+            shoot();
 
-    		if (targetDist <= range && locked) {
-            	shoot();
-        	}
     	} else {
+    		alignWithShip();
     		rotation = -1; // mark rotation as linked to ship
     	}
 	}
 
 	float rotation;
-	private void rotate() {
+	void rotate() {
 		// Sets rotation to what it was last frame: negates effect of parent rotating child
 		if (rotation != -1) { // negatives not possible for eulerAngle, thus means null
 			transform.eulerAngles = new Vector3(0, 0, rotation);
@@ -84,6 +83,22 @@ public class Gun : MonoBehaviour {
         rotation = transform.eulerAngles.z; // Record rotation
     }
 
+    void alignWithShip () {
+    	if (transform.localEulerAngles.z == 0) {
+    		return;
+
+    	} else if (transform.localEulerAngles.z < angSpeed || transform.localEulerAngles.z + angSpeed > 360) {
+    		transform.localEulerAngles = Vector3.zero;
+    		return;
+
+    	} else if (transform.localEulerAngles.z < 180) {
+    		transform.localEulerAngles = new Vector3(0, 0, transform.localEulerAngles.z - angSpeed);
+    	
+    	} else if (transform.localEulerAngles.z > 180) {
+    		transform.localEulerAngles = new Vector3(0, 0, transform.localEulerAngles.z + angSpeed);
+    	}
+    }
+
 	public void setTarget (GameObject newTarget) {
 		target = newTarget;
 	}
@@ -94,7 +109,7 @@ public class Gun : MonoBehaviour {
 		if (framesUntilShoot <= 0) {
 			if (targetDist <= range && locked) {
 				Bullet newBullet = Instantiate(bullet, transform.position, transform.rotation);
-				newBullet.setDestination(target.transform.position);
+				newBullet.setDestination(target.transform, transform.parent.GetComponent<Ship>().enemy);
 				framesUntilShoot = framesPerShot;
 			}
         } else {

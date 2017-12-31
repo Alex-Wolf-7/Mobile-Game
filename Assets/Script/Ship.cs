@@ -9,6 +9,9 @@ public class Ship : MonoBehaviour {
     Rigidbody2D ship;
     public bool enemy; // true if enemy ship, false if allied
     public bool isEnabled = false;
+    public float maxHealth;
+    public float health;
+    public float healthPercent = 100;
 
     // Constant variables set by ship type class
     protected float maxSpeed; 		// Max speed of ship
@@ -40,9 +43,12 @@ public class Ship : MonoBehaviour {
     	setup();
     }
 
+    void Start () {
+		destination = ship.position;
+    }
+
     protected void setup() {
     	ship = GetComponent<Rigidbody2D>();
-    	destination = ship.position;
     }
     
     void FixedUpdate() {
@@ -171,9 +177,8 @@ public class Ship : MonoBehaviour {
     
     // Checks whether or not a given point is on our ship
     public bool pointOnShip (Vector3 point) {
-        Collider2D[] results = new Collider2D[ship.attachedColliderCount];
-        ship.GetAttachedColliders(results);
-        return results[0].bounds.Contains(point);
+        Collider2D collider = GetComponent<Collider2D>();
+        return collider.bounds.Contains(point);
     }
 
     // Instructs guns to target a given GameObject
@@ -193,6 +198,24 @@ public class Ship : MonoBehaviour {
     // Returns ship GameObject
     public GameObject shipGameObject () {
     	return ship.gameObject;
+    }
+
+    // Returns if ship is destroyed or not
+    public void damage (float damage) {
+    	health -= damage;
+    	healthPercent = health / maxHealth;
+    	if (health <= 0) destroyShip();
+    }
+
+    void destroyShip () {
+    	// Remove ship from global arrays
+    	if (enemy) {
+    		Objects.removeEnemy(this);
+    	} else if (!enemy) {
+    		Objects.removeShip(this);
+    	}
+
+    	Destroy(ship.gameObject);
     }
 
     // Disables boat: makes invisible and halts "FixedUpdate" method
@@ -225,6 +248,7 @@ public class Ship : MonoBehaviour {
 		accelFrames = shipType.accelFrames;
 		angSpeed = shipType.angSpeed;
 		ticsPerTrailSwap = shipType.ticsPerTrailSwap;
+		maxHealth = health = shipType.maxHealth;
 
 		createGuns(shipType, smallGuns, mediumGuns, largeGuns);
 		createTrail(shipType);

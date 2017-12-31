@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Level1 : MonoBehaviour {
-	InputHandling inputHandling; // Pointer to this scene's InputHandling class
-
 	ShipType[] shipList; // List of allied shiptypes
 	GunType[,][] shipGunList; // Guns to put on each ship: shipGunList[ship, S/M/L][gun]
 	int numShips; // number of ships in shiplist
@@ -18,9 +16,6 @@ public class Level1 : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		// Fill out all above variables. Edit this to edit level, essentially
-		inputHandling = GetComponent<InputHandling>();
-
 		shipList = new ShipType[] {Objects.CarrierVars, Objects.CruiserVars, Objects.CruiserVars};
 
 		// List of ship gun loadouts
@@ -71,10 +66,10 @@ public class Level1 : MonoBehaviour {
 		enemySpawn = Instantiate(Objects.Spawn, new Vector3(0.0f, 40.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 180.0f));
 
 		// Spawn ships as set up above
-		spawn(shipList, shipGunList, numShips, shipSpawn, ref inputHandling.allShips, ref inputHandling.numShips, false);
-		spawn(enemyList, enemyGunList, numEnemies, enemySpawn, ref inputHandling.allEnemies, ref inputHandling.numEnemies, true);
+		spawn(shipList, shipGunList, numShips, shipSpawn, ref Objects.allShips, ref Objects.numShips, false);
+		spawn(enemyList, enemyGunList, numEnemies, enemySpawn, ref Objects.allEnemies, ref Objects.numEnemies, true);
 		// Active ship is first allied ship
-		Ship.activeShip = inputHandling.allShips[0];
+		Ship.activeShip = Objects.allShips[0];
 	}
 
 	/*
