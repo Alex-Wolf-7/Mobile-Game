@@ -15,6 +15,7 @@ public class Gun : MonoBehaviour {
 	int framesPerShot;
 
 	bool locked = false;
+	bool firing = false;
 
 	void Start () {
 	}
@@ -103,6 +104,10 @@ public class Gun : MonoBehaviour {
 		target = newTarget;
 	}
 
+	public bool isFiring () {
+		return firing;
+	}
+
 	// Fires a bullet in the direction of target
 	int framesUntilShoot = 0;
 	void shoot () {
@@ -115,6 +120,8 @@ public class Gun : MonoBehaviour {
         } else {
         	framesUntilShoot--;
         }
+
+        firing = (targetDist <= range && locked);
 	}
 
 	public void disable () {

@@ -11,6 +11,8 @@ public abstract class ShipType {
     public float angSpeed; 			// Degrees/second
     public int ticsPerTrailSwap; 	// How many tics before swapping trails
 
+    public float autoRange;
+
     public int numGunsS;
     public Gun[] gunSArray;
     public float[,] gunPosS;
@@ -42,6 +44,8 @@ public class Carrier : ShipType {
         angSpeed = 30.0f; 		// Degrees/second
         ticsPerTrailSwap = 10; 	// How many tics before swapping trails
 
+        autoRange = 50.0f;
+
         numGunsS = 1;
         gunPosS = new float[,] {{0.605f, 1.81f}};
 
@@ -70,6 +74,8 @@ public class Cruiser : ShipType {
         accelFrames = 60;       // Number of frames needed to hit max speed
         angSpeed = 50.0f;       // Degrees/second
         ticsPerTrailSwap = 10;  // How many tics before swapping trails
+
+        autoRange = 30.0f;
 
         numGunsS = 2;
         gunSArray = new Gun[] {Objects.GunS, Objects.GunS};

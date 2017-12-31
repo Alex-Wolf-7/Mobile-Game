@@ -24,6 +24,9 @@ public class Ship : MonoBehaviour {
     
     // Destination and related destination stuff
     Vector2 destination;
+    bool tracking; // If true, we are moving towards target and not destination
+    GameObject target;
+    Vector2 rotationVector; // Unit vector in direction of rotation
     
     // Trail details
     protected GameObject[] trails;
@@ -35,7 +38,7 @@ public class Ship : MonoBehaviour {
     protected Gun[] gunsS;
     protected Gun[] gunsM;
     protected Gun[] gunsL;
-    GameObject target;
+    protected float autoRange;
 
     protected GameObject border;
 
@@ -61,22 +64,31 @@ public class Ship : MonoBehaviour {
             ship.rotation += 360;
         }
         
-        if (destination != ship.position) {
-            move();
-        }
-
+        move();
+        setTargetNearest();
         border.GetComponent<SpriteRenderer>().enabled = (Ship.activeShip == this);
     }
     
     private void move() {
-        if (ship.position != destination) {
+    	if (tracking) {
+    		bool firing = isFiring();
+    		if (!firing) {
+    			destination = target.transform.position;
+    		} else {
+    			destination = ship.position;
+    		}
+    	}
+
+        if (isThrust) {
             rotate(); // Handles ship rotation
             thrust(); // Handlds ship movement
-            trail(); // Handles making cool bubble trails
+        } else {
+        	slow();
         }
+
+        trail();
     }
     
-    Vector2 rotationVector; // Unit vector in direction of rotation
     float destinationAngle; // The angle of our destination
     private void rotate() {
         Vector2 destinationDiff = destination - ship.position; // Destination in relation to ship
@@ -115,20 +127,13 @@ public class Ship : MonoBehaviour {
         float distance = destinationDiff.magnitude;
         
         // If extremely close to destination, snap to destination and stop all motion
-        if (distance < .01) {
-            isThrust = false;
-            ship.position = destination;
-            ship.velocity = Vector2.zero;
+        if (distance < .1) {
+        	isThrust = false;
+            destination = ship.position;
             ship.angularVelocity = 0;
         
-        // If close to destination, slow movement
-        } else if (distance < 2) {
-            isThrust = (distance > 1); // If distance is greater than one, thrust is on
-            ship.velocity = ((.75f/2 * distance + .25f) * maxSpeed) * rotationVector;
-
         } else {
             // Move forward
-            isThrust = true;
             if (ship.velocity.magnitude < maxSpeed) {
                 Vector2 newVelocity = ship.velocity.magnitude * rotationVector + (maxSpeed
                 	/ accelFrames) * rotationVector;
@@ -145,7 +150,7 @@ public class Ship : MonoBehaviour {
     
     // Handles bubble trail behind ship
     int ticsPerSwap = 0;
-    private void trail() {
+    private void trail () {
         if (isThrust) {
         	// If no trails active, set last trail to active so the first trail will be activated next
         	if (activeTrail == numTrails) activeTrail--;
@@ -169,9 +174,27 @@ public class Ship : MonoBehaviour {
             activeTrail = numTrails;
         }
     }
+
+    // Slows ship after crossing destination
+    void slow () {
+    	if (ship.velocity == Vector2.zero) return;
+
+    	ship.velocity -= rotationVector * (maxSpeed / accelFrames);
+
+    	if (ship.velocity.x * rotationVector.x < 0) { // If facing different directions
+    		ship.velocity = new Vector2(0, ship.velocity.y);
+    	}
+    	if (ship.velocity.y * rotationVector.y < 0) { // If facing different directions
+    		ship.velocity = new Vector2(0, ship.velocity.y);
+    	}
+
+    	destination = ship.position;
+    }
     
     // Set the destination for the boat to move to 
     public void setDestination (Vector2 newDestination) {
+    	tracking = false;
+    	isThrust = true;
         destination = newDestination;
     }
     
@@ -183,6 +206,8 @@ public class Ship : MonoBehaviour {
 
     // Instructs guns to target a given GameObject
     public void setTarget (GameObject newTarget) {
+    	tracking = true;
+    	isThrust = true;
     	target = newTarget;
     	for (int i = 0; i < numGunsS; i++) {
     		gunsS[i].setTarget(newTarget);
@@ -193,6 +218,64 @@ public class Ship : MonoBehaviour {
     	for (int i = 0; i < numGunsL; i++) {
     		gunsL[i].setTarget(newTarget);
     	}
+    }
+
+    // Targets the nearest boat without interrupting steering
+    public void setTargetNearest () {
+    	// If tracking a specific ship, don't autotarget
+    	if (tracking) return;
+
+    	// Find the closest ship that is the opposite faction as this
+    	float closestDist = autoRange;
+    	GameObject closest = null;;
+    	if (enemy) {
+    		for (int i = 0; i < Objects.numShips; i++) {
+    			float dist = Mathf.Abs((transform.position - Objects.allShips[i].shipGameObject().transform.position).magnitude);
+    			
+    			if (closest == null || dist < closestDist) {
+    				closestDist = dist;
+    				closest = Objects.allShips[i].shipGameObject();
+    			}
+    		}
+    	
+    	} else {
+    		for (int i = 0; i < Objects.numEnemies; i++) {
+    			float dist = Mathf.Abs((transform.position - Objects.allEnemies[i].shipGameObject().transform.position).magnitude);
+    			
+    			if (closest == null || dist < closestDist) {
+    				closestDist = dist;
+    				closest = Objects.allEnemies[i].shipGameObject();
+    			}
+    		}
+    	}
+    	// If no opposition exists, closest == null, which sets guns to be off
+
+    	// If nothing in decent range, don't focus on anything
+    	if (closestDist > autoRange) {
+    		closest = null;
+    	}
+
+    	setTarget(closest);
+    	tracking = false; // Above method sets tracking to true, but autotarget should keep previous heading
+    }
+
+    bool isFiring () {
+    	for (int i = 0; i < numGunsS; i++) {
+    		if (gunsS[i].isFiring()) {
+    			return true;
+    		}
+    	}
+    	for (int i = 0; i < numGunsM; i++) {
+    		if (gunsM[i].isFiring()) {
+    			return true;
+    		}
+    	}
+    	for (int i = 0; i < numGunsL; i++) {
+    		if (gunsL[i].isFiring()) {
+    			return true;
+    		}
+    	}
+    	return false;
     }
 
     // Returns ship GameObject
@@ -241,14 +324,16 @@ public class Ship : MonoBehaviour {
     	destination = ship.position;
 	}
 
-
-	// Initialization methods, sets up new ship as as a certain ShipType
+	// *********************************************************************
+	// * Initialization methods, sets up new ship as as a certain ShipType *
+	// *********************************************************************
 	public void newShip (ShipType shipType, GunType[] smallGuns, GunType[] mediumGuns, GunType[] largeGuns) {
 		maxSpeed = shipType.maxSpeed;
 		accelFrames = shipType.accelFrames;
 		angSpeed = shipType.angSpeed;
 		ticsPerTrailSwap = shipType.ticsPerTrailSwap;
 		maxHealth = health = shipType.maxHealth;
+		autoRange = shipType.autoRange;
 
 		createGuns(shipType, smallGuns, mediumGuns, largeGuns);
 		createTrail(shipType);
