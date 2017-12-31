@@ -31,6 +31,8 @@ public abstract class ShipType {
     public float[] trailScale;
 
     public float[] borderDims;
+    public float[] healthDims;
+    public float[] healthLoc;
 }
 
 // Heavy carrier with the ability to launch fighter strikes
@@ -61,6 +63,8 @@ public class Carrier : ShipType {
         trailScale = new float[] {2.0f, 1.0f};
 
         borderDims = new float[] {0.4f, 0.55f};
+        healthDims = new float[] {5.0f, 0.1f};
+        healthLoc = new float[] {0, -4.0f, 0};
     }
 }
 
@@ -95,5 +99,7 @@ public class Cruiser : ShipType {
         trailScale = new float[] {1.0f, 1.0f};
 
         borderDims = new float[] {0.25f, 0.35f};
+        healthDims = new float[] {2.0f, 0.1f};
+        healthLoc = new float[] {0, -2.5f, 0};
     }
 }

@@ -11,16 +11,16 @@ public class Ship : MonoBehaviour {
     public bool isEnabled = false;
     public float maxHealth;
     public float health;
-    public float healthPercent = 100;
+    public float healthPercent;
 
     // Constant variables set by ship type class
-    protected float maxSpeed; 		// Max speed of ship
-    protected int accelFrames; 		// Number of frames needed to hit max speed
-    protected float angSpeed; 		// Degrees/second
-    protected int ticsPerTrailSwap; 	// How many tics before swapping trails
-    protected int numGunsS;
-    protected int numGunsM;
-    protected int numGunsL;
+    float maxSpeed; 		// Max speed of ship
+    int accelFrames; 		// Number of frames needed to hit max speed
+    float angSpeed; 		// Degrees/second
+    int ticsPerTrailSwap; 	// How many tics before swapping trails
+    int numGunsS;
+    int numGunsM;
+    int numGunsL;
     
     // Destination and related destination stuff
     Vector2 destination;
@@ -29,18 +29,21 @@ public class Ship : MonoBehaviour {
     Vector2 rotationVector; // Unit vector in direction of rotation
     
     // Trail details
-    protected GameObject[] trails;
-    protected int numTrails;
-    protected int activeTrail; // index of active trail, == numTrails for none
+    GameObject[] trails;
+    int numTrails;
+    int activeTrail; // index of active trail, == numTrails for none
     bool isThrust;
 
     // Gun details
-    protected Gun[] gunsS;
-    protected Gun[] gunsM;
-    protected Gun[] gunsL;
-    protected float autoRange;
+    Gun[] gunsS;
+    Gun[] gunsM;
+    Gun[] gunsL;
+    float autoRange;
 
-    protected GameObject border;
+    GameObject border;
+    GameObject healthBar;
+    Vector3 healthLoc;
+    float maxHealthWidth;
 
     void Awake () {
     	setup();
@@ -50,7 +53,7 @@ public class Ship : MonoBehaviour {
 		destination = ship.position;
     }
 
-    protected void setup() {
+    void setup() {
     	ship = GetComponent<Rigidbody2D>();
     }
     
@@ -66,7 +69,8 @@ public class Ship : MonoBehaviour {
         
         move();
         setTargetNearest();
-        border.GetComponent<SpriteRenderer>().enabled = (Ship.activeShip == this);
+        handleBorder();
+        handleHealthBar();
     }
     
     private void move() {
@@ -74,6 +78,7 @@ public class Ship : MonoBehaviour {
     		bool firing = isFiring();
     		if (!firing) {
     			destination = target.transform.position;
+    			isThrust = true;
     		} else {
     			destination = ship.position;
     		}
@@ -182,15 +187,42 @@ public class Ship : MonoBehaviour {
     	ship.velocity -= rotationVector * (maxSpeed / accelFrames);
 
     	if (ship.velocity.x * rotationVector.x < 0) { // If facing different directions
-    		ship.velocity = new Vector2(0, ship.velocity.y);
+    		ship.velocity = new Vector2(0.0f, ship.velocity.y);
     	}
     	if (ship.velocity.y * rotationVector.y < 0) { // If facing different directions
-    		ship.velocity = new Vector2(0, ship.velocity.y);
+    		ship.velocity = new Vector2(ship.velocity.x, 0.0f);
     	}
 
     	destination = ship.position;
     }
     
+    void handleBorder () {
+		if (Ship.activeShip == this) {
+        	border.GetComponent<SpriteRenderer>().enabled = true;
+        	border.GetComponent<SpriteRenderer>().color = healthColor();
+        	healthBar.GetComponent<SpriteRenderer>().enabled = false;
+        } else {
+        	border.GetComponent<SpriteRenderer>().enabled = false;
+        }
+    }
+
+    void handleHealthBar () {
+        // Health bar on if health is not full
+        if (health == maxHealth) {
+        	healthBar.GetComponent<SpriteRenderer>().enabled = false;
+        	return;
+        
+        } else {
+       		healthBar.GetComponent<SpriteRenderer>().enabled = (health != maxHealth);
+       		healthBar.GetComponent<SpriteRenderer>().color = healthColor();
+       		healthBar.transform.position = this.transform.position + healthLoc;
+       		healthBar.transform.eulerAngles = Vector3.zero;
+       		// Health bar shrinks as damage is taken
+       		healthBar.transform.localScale = new Vector3(healthPercent * maxHealthWidth,
+       		healthBar.transform.localScale.y, healthBar.transform.localScale.z);
+       	}
+    }
+
     // Set the destination for the boat to move to 
     public void setDestination (Vector2 newDestination) {
     	tracking = false;
@@ -207,7 +239,6 @@ public class Ship : MonoBehaviour {
     // Instructs guns to target a given GameObject
     public void setTarget (GameObject newTarget) {
     	tracking = true;
-    	isThrust = true;
     	target = newTarget;
     	for (int i = 0; i < numGunsS; i++) {
     		gunsS[i].setTarget(newTarget);
@@ -223,7 +254,7 @@ public class Ship : MonoBehaviour {
     // Targets the nearest boat without interrupting steering
     public void setTargetNearest () {
     	// If tracking a specific ship, don't autotarget
-    	if (tracking) return;
+    	if (tracking && target != null) return;
 
     	// Find the closest ship that is the opposite faction as this
     	float closestDist = autoRange;
@@ -324,6 +355,23 @@ public class Ship : MonoBehaviour {
     	destination = ship.position;
 	}
 
+	/*
+	 * white: 100% health exactly
+	 * green: very high health
+	 * yellow: half health
+	 * red: very low health
+	 * Colors change gradually from one to another as health drops (except white is only exactly 100%)
+	 */
+	public Color healthColor () {
+		if (health == maxHealth) return Color.white;
+		if (healthPercent > 0.5f) {
+			return Color.Lerp(Color.yellow, Color.green, (healthPercent - 0.5f) * 2);
+		} else {
+			return Color.Lerp(Color.red, Color.yellow, healthPercent * 2);
+		}
+
+	}
+
 	// *********************************************************************
 	// * Initialization methods, sets up new ship as as a certain ShipType *
 	// *********************************************************************
@@ -384,5 +432,9 @@ public class Ship : MonoBehaviour {
 	void createBorder (ShipType shipType) {
 		border = Instantiate(Objects.Border, transform);
 		border.transform.localScale = new Vector3(shipType.borderDims[0], shipType.borderDims[1], 1);
+		healthBar = Instantiate(Objects.healthBar, transform);
+		healthBar.transform.localScale = new Vector3(shipType.healthDims[0], shipType.healthDims[1], 1);
+		maxHealthWidth = shipType.healthDims[0];
+		healthLoc = new Vector3(shipType.healthLoc[0], shipType.healthLoc[1], shipType.healthLoc[2]);
 	}
 }

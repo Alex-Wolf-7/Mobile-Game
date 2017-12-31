@@ -13,6 +13,7 @@ public class Initialize : MonoBehaviour {
 	public BulletM bulletM;
 	public SpawnPoint Spawn;
 	public GameObject Border;
+	public GameObject healthBar;
 
 	// Use this for initialization
 	void Awake () {
@@ -36,6 +37,8 @@ public class Initialize : MonoBehaviour {
 		// No disable line: disabled by nature
 		Objects.Border = Border;
 		Border.GetComponent<SpriteRenderer>().enabled = false;
+		Objects.healthBar = healthBar;
+		healthBar.GetComponent<SpriteRenderer>().enabled = false;
 
 		// Ship types
 		Objects.CarrierVars = new Carrier();

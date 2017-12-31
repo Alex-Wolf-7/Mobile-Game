@@ -15,6 +15,7 @@ public static class Objects {
 	public static BulletM bulletM;
 	public static SpawnPoint Spawn;
 	public static GameObject Border;
+	public static GameObject healthBar;
 
 	// list of ship types
 	public static Carrier CarrierVars;
@@ -65,7 +66,7 @@ public static class Objects {
 		if (index == numShips) return;
 
 		numShips--;
-		for (int i = index; i + 1 < numShips; i++) {
+		for (int i = index; i < numShips; i++) {
 			allShips[i] = allShips[i + 1];
 		}
 		allShips[numShips] = null;
