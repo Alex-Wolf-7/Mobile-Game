@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Initialize : MonoBehaviour {
-	public Ship CarrierHull;
-	public Ship CruiserHull;
+	public Carrier Carrier;
+	public Cruiser Cruiser;
 	public Gun GunS;
 	public Gun GunM;
 	public GameObject TrailOne;
@@ -16,11 +16,7 @@ public class Initialize : MonoBehaviour {
 	public GameObject healthBar;
 
 	// Use this for initialization
-	void Awake () {
-		Objects.CarrierHull = CarrierHull;
-		CarrierHull.disable();
-		Objects.CruiserHull = CruiserHull;
-		CruiserHull.disable();
+	void Start () {
 		Objects.GunS = GunS;
 		GunS.disable();
 		Objects.GunM = GunM;
@@ -40,13 +36,15 @@ public class Initialize : MonoBehaviour {
 		Objects.healthBar = healthBar;
 		healthBar.GetComponent<SpriteRenderer>().enabled = false;
 
-		// Ship types
-		Objects.CarrierVars = new Carrier();
-		Objects.CruiserVars = new Cruiser();
-
 		// Gun Types
 		Objects.GunSVars = new GunS();
 		Objects.GunMVars = new GunM();
+
+		// Ready boat types
+		Objects.Carrier = Carrier;
+		Carrier.ready();
+		Objects.Cruiser = Cruiser;
+		Cruiser.ready();
 
 		// Array of allied ships and enemy ships
 		Objects.allShips = new Ship[ShipVars.maxAllies];

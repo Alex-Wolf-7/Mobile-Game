@@ -9,27 +9,11 @@ public class InputHandling : MonoBehaviour {
     
     // Touch handling vars
     int numTouchesLastFrame;
-
-    SpawnPoint spawnAllies;
-    SpawnPoint spawnEnemies;
     bool canClick = true;
-    
-    // Spawning consts
-    const int maxShips = 10;
 
 	// Use this for initialization
 	void Start () {
         currentCamera = GetComponent<Camera>();
-
-        Vector3 allyPos = new Vector3(0.0f, 0.0f, 0.0f);
-        Vector3 allyRot = new Vector3(0.0f, 0.0f, 0.0f);
-        spawnAllies = Instantiate(Objects.Spawn, allyPos, 
-            Quaternion.Euler(allyRot)) as SpawnPoint;
-
-        Vector3 enemyPos = new Vector3(8.0f, 5.0f, 0.0f);
-        Vector3 enemyRot = new Vector3(0.0f, 0.0f, 90.0f);
-        spawnEnemies = Instantiate(Objects.Spawn, enemyPos, 
-            Quaternion.Euler(enemyRot)) as SpawnPoint;
     }
 	
 	// Update is called once per frame
@@ -216,40 +200,6 @@ public class InputHandling : MonoBehaviour {
         } else {
             return false;
         }
-    }
-    
-    public void addCarrier () {
-        if (Objects.numShips >= maxShips) return;
-        GunType[] smallGuns = new GunType[] {Objects.GunSVars};
-        GunType[] mediumGuns = new GunType[] {Objects.GunMVars};
-        GunType[] largeGuns = new GunType[] {};
-        Objects.allShips[Objects.numShips++] = Instantiate(Objects.CarrierVars.hull, spawnAllies.getTransform().position,
-            spawnAllies.getTransform().rotation) as Ship;
-        Objects.allShips[Objects.numShips - 1].newShip(Objects.CarrierVars, smallGuns, mediumGuns, largeGuns);
-        Ship.activeShip = Objects.allShips[Objects.numShips - 1];
-    }
-
-    public void addCruiser () {
-        if (Objects.numShips >= maxShips) return;
-        GunType[] smallGuns = new GunType[] {Objects.GunSVars, Objects.GunSVars};
-        GunType[] mediumGuns = new GunType[] {};
-        GunType[] largeGuns = new GunType[] {};
-        Objects.allShips[Objects.numShips++] = Instantiate(Objects.CruiserVars.hull, spawnAllies.getTransform().position,
-            spawnAllies.getTransform().rotation) as Ship;
-        Objects.allShips[Objects.numShips - 1].newShip(Objects.CruiserVars, smallGuns, mediumGuns, largeGuns);
-        Ship.activeShip = Objects.allShips[Objects.numShips - 1];
-    }
-
-    public void addEnemy () {
-        if (Objects.numEnemies >= maxShips) return;
-        GunType[] smallGuns = new GunType[] {Objects.GunSVars};
-        GunType[] mediumGuns = new GunType[] {Objects.GunMVars};
-        GunType[] largeGuns = new GunType[] {};
-        Objects.allEnemies[Objects.numEnemies] = Instantiate(Objects.CarrierVars.hull, spawnEnemies.getTransform().position,
-            spawnEnemies.getTransform().rotation) as Ship;
-        Objects.allEnemies[Objects.numEnemies].newShip(Objects.CarrierVars, smallGuns, mediumGuns, largeGuns);
-        Objects.allEnemies[Objects.numEnemies].enemy = true;
-        Objects.numEnemies++;
     }
     
     // Called when mouse moves on (or off of, below) button. Disables non-button mouse actions

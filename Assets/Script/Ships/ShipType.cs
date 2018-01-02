@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class ShipType {
-    public Ship hull;
     public float maxHealth;
 
 	public float maxSpeed; 			// Max speed of ship
@@ -35,43 +34,9 @@ public abstract class ShipType {
     public float[] healthLoc;
 }
 
-// Heavy carrier with the ability to launch fighter strikes
-public class Carrier : ShipType {
-    public Carrier () {
-        hull = Objects.CarrierHull;
-        maxHealth = 5000.0f;
-
-        maxSpeed = 2.0f; 		// Max speed of ship
-        accelFrames = 100; 		// Number of frames needed to hit max speed
-        angSpeed = 30.0f; 		// Degrees/second
-        ticsPerTrailSwap = 10; 	// How many tics before swapping trails
-
-        autoRange = 40.0f;
-
-        numGunsS = 1;
-        gunPosS = new float[,] {{0.605f, 1.81f}};
-
-        numGunsM = 1;
-        gunPosM = new float[,] {{-0.265f, -2.0f}};
-
-        numGunsL = 0;
-        gunPosL = new float[,] {{}};
-
-        numTrails = 2;
-        trailArray = new GameObject[] {Objects.TrailOne, Objects.TrailTwo};
-        trailPos = new float[,] {{0.0f, -3.0f}, {0.0f, -3.0f}};
-        trailScale = new float[] {2.0f, 1.0f};
-
-        borderDims = new float[] {0.4f, 0.55f};
-        healthDims = new float[] {5.0f, 0.1f};
-        healthLoc = new float[] {0, -4.0f, 0};
-    }
-}
-
 // Small, fast ship with two small guns
-public class Cruiser : ShipType {
-    public Cruiser () {
-        hull = Objects.CruiserHull;
+public class CruiserVars : ShipType {
+    public CruiserVars () {
         maxHealth = 2000.0f;
 
         maxSpeed = 4.0f;        // Max speed of ship

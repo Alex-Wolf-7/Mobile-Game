@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Level1 : MonoBehaviour {
-	ShipType[] shipList; // List of allied shiptypes
+	Ship[] shipList; // List of allied ships
 	GunType[,][] shipGunList; // Guns to put on each ship: shipGunList[ship, S/M/L][gun]
 	int numShips; // number of ships in shiplist
 	SpawnPoint shipSpawn; // starting spawnpoint for ships
 	
 	// Same as above but for enemy ships
-	ShipType[] enemyList;
+	Ship[] enemyList;
 	GunType[,][] enemyGunList;
 	int numEnemies;
 	SpawnPoint enemySpawn;
 
 	// Use this for initialization
 	void Start () {
-		shipList = new ShipType[] {Objects.CarrierVars, Objects.CruiserVars, Objects.CruiserVars};
+		shipList = new Ship[] {Objects.Carrier, Objects.Cruiser, Objects.Cruiser};
 
 		// List of ship gun loadouts
 		shipGunList = new GunType[,][] {
@@ -44,7 +44,7 @@ public class Level1 : MonoBehaviour {
 		shipSpawn = Instantiate(Objects.Spawn, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 0.0f));
 
 		// Enemy ships
-		enemyList = new ShipType[] {Objects.CarrierVars, Objects.CruiserVars};
+		enemyList = new Ship[] {Objects.Carrier, Objects.Cruiser};
 		
 		// Enemy ship gun loudouts
 		enemyGunList = new GunType[,][] {
@@ -75,7 +75,7 @@ public class Level1 : MonoBehaviour {
 	/*
 	 * Spawns new ship
 	 * Params:
-	 *		ShipType[] shipList: array of shiptypes to spawn
+	 *		Ship[] shipList: array of ship to spawn
 	 * 		GunType[,][] gunList: guns to spawn per ship - shipGunList[ship, S/M/L][gun]
 	 * 		int numShips: number of ships
 	 * 		SpawnPoint spawn: center of where to spawn ships at
@@ -83,7 +83,7 @@ public class Level1 : MonoBehaviour {
 	 *		ref int totalShips: reference to current size of allShips, wherever each are stored
 	 *		bool enemy: true to make new ships enemies, false to keep allied
 	 */ 
-	void spawn (ShipType[] shipList, GunType[,][] gunList, int numShips, SpawnPoint spawn, ref Ship[] allShips,
+	void spawn (Ship[] shipList, GunType[,][] gunList, int numShips, SpawnPoint spawn, ref Ship[] allShips,
 		ref int totalShips, bool enemy) {
 
 		// Record position of SpawnPoint, to put it back when we are finished spawning ships
@@ -100,10 +100,11 @@ public class Level1 : MonoBehaviour {
 					spawn.getTransform().position.y, spawn.getTransform().position.z);
 			}
 
-			allShips[totalShips] = Instantiate(shipList[i].hull, spawn.getTransform().position, spawn.getTransform().rotation);
+			allShips[totalShips] = Instantiate(shipList[i], spawn.getTransform().position, spawn.getTransform().rotation);
+			allShips[totalShips].ready();
 
 			// Apply specifics to ship, including gun loadouts
-			allShips[totalShips].newShip(shipList[i], gunList[i, 0], gunList[i, 1], gunList[i, 2]);
+			allShips[totalShips].createGuns(gunList[i, 0], gunList[i, 1], gunList[i, 2]);
 			allShips[totalShips].enemy = enemy; // Set enemy if enemy
 
 			totalShips++; // Mark ship as completed

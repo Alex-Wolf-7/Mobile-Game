@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class Ship : MonoBehaviour {
+abstract public class Ship : MonoBehaviour {
     // Whatever ship is currently selected
     public static Ship activeShip;
 
@@ -13,14 +13,24 @@ public class Ship : MonoBehaviour {
     public float health;
     public float healthPercent;
 
-    // Constant variables set by ship type class
-    float maxSpeed; 		// Max speed of ship
-    int accelFrames; 		// Number of frames needed to hit max speed
-    float angSpeed; 		// Degrees/second
-    int ticsPerTrailSwap; 	// How many tics before swapping trails
-    int numGunsS;
-    int numGunsM;
-    int numGunsL;
+    // Constant variables set by ship-deriving class
+    protected float maxSpeed; 		// Max speed of ship
+    protected int accelFrames; 		// Number of frames needed to hit max speed
+    protected float angSpeed; 		// Degrees/second
+    protected int ticsPerTrailSwap; // How many tics before swapping trails
+    public int numGunsS;
+    public int numGunsM;
+    public int numGunsL;
+    protected float autoRange;
+    public float[,] gunPosS;
+    protected float[,] gunPosM;
+    protected float[,] gunPosL;
+    protected int numTrails;
+    protected float[,] trailPos;
+    protected Vector2 trailScale;
+    protected Vector2 borderDims;
+    protected Vector2 healthDims;
+    protected Vector3 healthLoc;
     
     // Destination and related destination stuff
     Vector2 destination;
@@ -29,31 +39,25 @@ public class Ship : MonoBehaviour {
     Vector2 rotationVector; // Unit vector in direction of rotation
     
     // Trail details
-    GameObject[] trails;
-    int numTrails;
+    protected GameObject[] trails;
     int activeTrail; // index of active trail, == numTrails for none
-    bool isThrust;
+    bool isThrust = false;
 
     // Gun details
     Gun[] gunsS;
     Gun[] gunsM;
     Gun[] gunsL;
-    float autoRange;
 
     GameObject border;
     GameObject healthBar;
-    Vector3 healthLoc;
-    float maxHealthWidth;
+
+    abstract public void ready ();
 
     void Awake () {
     	setup();
     }
 
-    void Start () {
-		destination = ship.position;
-    }
-
-    void setup() {
+    protected void setup() {
     	ship = GetComponent<Rigidbody2D>();
     }
     
@@ -219,7 +223,7 @@ public class Ship : MonoBehaviour {
        		healthBar.transform.position = this.transform.position + healthLoc;
        		healthBar.transform.eulerAngles = Vector3.zero;
        		// Health bar shrinks as damage is taken
-       		healthBar.transform.localScale = new Vector3(healthPercent * maxHealthWidth,
+       		healthBar.transform.localScale = new Vector3(healthPercent * healthDims[0],
        		healthBar.transform.localScale.y, healthBar.transform.localScale.z);
        	}
     }
@@ -375,68 +379,56 @@ public class Ship : MonoBehaviour {
 	}
 
 	// *********************************************************************
-	// * Initialization methods, sets up new ship as as a certain ShipType *
+	// * Initialization methods, sets up new ship as as a certain *
 	// *********************************************************************
-	public void newShip (ShipType shipType, GunType[] smallGuns, GunType[] mediumGuns, GunType[] largeGuns) {
-		maxSpeed = shipType.maxSpeed;
-		accelFrames = shipType.accelFrames;
-		angSpeed = shipType.angSpeed;
-		ticsPerTrailSwap = shipType.ticsPerTrailSwap;
-		maxHealth = health = shipType.maxHealth;
-		autoRange = shipType.autoRange;
-
-		createGuns(shipType, smallGuns, mediumGuns, largeGuns);
-		createTrail(shipType);
-		createBorder(shipType);
-		enable();
+	public void prepareChildren () {
+		createTrail();
+		createBorder();
 	}
 
-	void createGuns (ShipType shipType, GunType[] smallGuns, GunType[] mediumGuns, GunType[] largeGuns) {
-		numGunsS = shipType.numGunsS;
+	public void createGuns (GunType[] smallGuns, GunType[] mediumGuns, GunType[] largeGuns) {
 		gunsS = new Gun[numGunsS];
 		for (int i = 0; i < numGunsS; i++) {
 			gunsS[i] = Instantiate(smallGuns[i].gun, transform);
 			gunsS[i].newGun(smallGuns[i]);
-			gunsS[i].transform.localPosition = new Vector3(shipType.gunPosS[i, 0], shipType.gunPosS[i, 1], transform.position.z);
+			gunsS[i].transform.localPosition = new Vector3(gunPosS[i, 0], gunPosS[i, 1], transform.position.z);
 			gunsS[i].transform.rotation = transform.rotation;
 		}
 
-		numGunsM = shipType.numGunsM;
 		gunsM = new Gun[numGunsM];
 		for (int i = 0; i < numGunsM; i++) {
 			gunsM[i] = Instantiate(mediumGuns[i].gun, transform);
 			gunsM[i].newGun(mediumGuns[i]);
-			gunsM[i].transform.localPosition = new Vector3(shipType.gunPosM[i, 0], shipType.gunPosM[i, 1], transform.position.z);
+			gunsM[i].transform.localPosition = new Vector3(gunPosM[i, 0], gunPosM[i, 1], transform.position.z);
 			gunsM[i].transform.rotation = transform.rotation;
 		}
 
-		numGunsL = shipType.numGunsL;
 		gunsL = new Gun[numGunsL];
 		for (int i = 0; i < numGunsL; i++) {
 			gunsL[i] = Instantiate(largeGuns[i].gun, transform);
 			gunsL[i].newGun(largeGuns[i]);
-			gunsL[i].transform.localPosition = new Vector3(shipType.gunPosL[i, 0], shipType.gunPosL[i, 1], transform.position.z);
+			gunsL[i].transform.localPosition = new Vector3(gunPosL[i, 0], gunPosL[i, 1], transform.position.z);
 			gunsL[i].transform.transform.rotation = transform.rotation;
 		}
+
+        enable();
 	}
 
-	void createTrail (ShipType shipType) {
-		numTrails = shipType.numTrails;
-		trails = new GameObject[numTrails];
+	void createTrail () {
 		for (int i = 0; i < numTrails; i++) {
-			trails[i] = Instantiate(shipType.trailArray[i], transform);
-			trails[i].transform.localPosition = new Vector3(shipType.trailPos[i, 0], shipType.trailPos[i, 1], transform.position.z);
+			GameObject newTrail = Instantiate(trails[i], transform);
+            trails[i] = newTrail;
+			trails[i].transform.localPosition = new Vector3(trailPos[i, 0], trailPos[i, 1], transform.position.z);
 			trails[i].transform.rotation = transform.rotation;
-			trails[i].transform.localScale = new Vector3(shipType.trailScale[0], shipType.trailScale[1], 1.0f);
+			trails[i].transform.localScale = new Vector3(trailScale[0], trailScale[1], 1.0f);
 		}
 	}
 
-	void createBorder (ShipType shipType) {
+	void createBorder () {
 		border = Instantiate(Objects.Border, transform);
-		border.transform.localScale = new Vector3(shipType.borderDims[0], shipType.borderDims[1], 1);
+		border.transform.localScale = new Vector3(borderDims[0], borderDims[1], 1);
 		healthBar = Instantiate(Objects.healthBar, transform);
-		healthBar.transform.localScale = new Vector3(shipType.healthDims[0], shipType.healthDims[1], 1);
-		maxHealthWidth = shipType.healthDims[0];
-		healthLoc = new Vector3(shipType.healthLoc[0], shipType.healthLoc[1], shipType.healthLoc[2]);
+		healthBar.transform.localScale = new Vector3(healthDims[0], healthDims[1], 1);
+		healthLoc = new Vector3(healthLoc[0], healthLoc[1], healthLoc[2]);
 	}
 }
