@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Cruiser : Ship {
-	override public void ready () {
+	void Awake () {
 		maxSpeed = 4.0f;
 		accelFrames = 60;
 		angSpeed = 50.0f;
@@ -28,5 +28,6 @@ public class Cruiser : Ship {
         healthLoc = new Vector3(0, -2.5f, 0);
 
         prepareChildren();
+        setup();
 	}
 }

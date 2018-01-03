@@ -101,7 +101,6 @@ public class Level1 : MonoBehaviour {
 			}
 
 			allShips[totalShips] = Instantiate(shipList[i], spawn.getTransform().position, spawn.getTransform().rotation);
-			allShips[totalShips].ready();
 
 			// Apply specifics to ship, including gun loadouts
 			allShips[totalShips].createGuns(gunList[i, 0], gunList[i, 1], gunList[i, 2]);

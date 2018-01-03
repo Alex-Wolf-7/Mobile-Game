@@ -51,15 +51,13 @@ abstract public class Ship : MonoBehaviour {
     GameObject border;
     GameObject healthBar;
 
-    // Overrided method that sets all "protected" values above
-    abstract public void ready ();
-
     void Awake () {
     	setup();
     }
 
     protected void setup() {
     	ship = GetComponent<Rigidbody2D>();
+        disable();
     }
     
     void FixedUpdate() {
