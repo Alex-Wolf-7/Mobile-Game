@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Carrier : Ship {
 	void Awake () {
+		shipName = "carrier";
+
 		maxSpeed = 2.0f;
 		accelFrames = 100;
 		angSpeed = 30.0f;

@@ -14,6 +14,7 @@ abstract public class Ship : MonoBehaviour {
     public float healthPercent;
 
     // Constant variables set by ship-deriving class
+	public string shipName;
     protected float maxSpeed; 		// Max speed of ship
     protected int accelFrames; 		// Number of frames needed to hit max speed
     protected float angSpeed; 		// Degrees/second
@@ -404,6 +405,8 @@ abstract public class Ship : MonoBehaviour {
 			trails[i].transform.localPosition = new Vector3(trailPos[i, 0], trailPos[i, 1], transform.position.z);
 			trails[i].transform.rotation = transform.rotation;
 			trails[i].transform.localScale = new Vector3(trailScale[0], trailScale[1], 1.0f);
+            trails[i].GetComponent<SpriteRenderer>().enabled = false;
+            activeTrail = numTrails;
 		}
 	}
 

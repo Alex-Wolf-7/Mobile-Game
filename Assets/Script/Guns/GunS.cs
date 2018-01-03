@@ -6,6 +6,7 @@ public class GunS : Gun {
 
 	// Use this for initialization
 	void Start () {
+        gunName = "gunS";
 		bullet = Objects.objects.bulletS;
 		size = 's';
 		range = 20.0f;

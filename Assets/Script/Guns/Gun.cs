@@ -4,6 +4,7 @@ using UnityEngine;
 
 public abstract class Gun : MonoBehaviour {
 	protected Bullet bullet;
+    public string gunName;
 	protected char size;
 	protected float range;
 	protected int framesPerShot;

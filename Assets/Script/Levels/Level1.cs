@@ -16,32 +16,26 @@ public class Level1 : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		shipList = new Ship[] {Objects.objects.carrier, Objects.objects.cruiser, Objects.objects.cruiser};
-
-		// List of ship gun loadouts
-		shipGunList = new Gun[,][] {
-			{
-				// Carrier
-				new Gun[] {Objects.objects.gunS},
-				new Gun[] {Objects.objects.gunM},
-				new Gun[] {}
-			},
-			{
-				// Cruiser
-				new Gun[] {Objects.objects.gunS, Objects.objects.gunS},
-				new Gun[] {},
-				new Gun[] {}
-			},
-			{
-				// Cruiser
-				new Gun[] {Objects.objects.gunS, Objects.objects.gunS},
-				new Gun[] {},
-				new Gun[] {}
-			}
-		};
-
-		numShips = 3;
 		shipSpawn = Instantiate(Objects.objects.spawn, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 0.0f));
+
+        // If no fleet made, make an empty one
+        if (Fleet.fleet == null) {
+            Fleet fleet = new Fleet();
+        }
+
+        // Sort fleet to prepare it to be checked out
+        Fleet.fleet.sortShips();
+
+        numShips = Fleet.fleet.numShips();
+        // Get list of ships
+        shipList = Fleet.fleet.allShips();
+        // Get guns for each ship
+        shipGunList = new Gun[numShips, 3][];
+        for (int i = 0; i < numShips; i++) {
+            shipGunList[i, 0] = Fleet.fleet.allGunsS(i);
+            shipGunList[i, 1] = Fleet.fleet.allGunsM(i);
+            shipGunList[i, 2] = Fleet.fleet.allGunsL(i);
+        }
 
 		// Enemy ships
 		enemyList = new Ship[] {Objects.objects.carrier, Objects.objects.cruiser};
@@ -62,12 +56,11 @@ public class Level1 : MonoBehaviour {
 			},
 		};
 
-		numEnemies = 2;
 		enemySpawn = Instantiate(Objects.objects.spawn, new Vector3(0.0f, 40.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 180.0f));
 
 		// Spawn ships as set up above
-		spawn(shipList, shipGunList, numShips, shipSpawn, ref Objects.objects.allShips, ref Objects.objects.numShips, false);
-		spawn(enemyList, enemyGunList, numEnemies, enemySpawn, ref Objects.objects.allEnemies, ref Objects.objects.numEnemies, true);
+		spawn(shipList, shipGunList, shipSpawn, ref Objects.objects.allShips, ref Objects.objects.numShips, false);
+		spawn(enemyList, enemyGunList, enemySpawn, ref Objects.objects.allEnemies, ref Objects.objects.numEnemies, true);
 		// Active ship is first allied ship
 		Ship.activeShip = Objects.objects.allShips[0];
 	}
@@ -83,8 +76,10 @@ public class Level1 : MonoBehaviour {
 	 *		ref int totalShips: reference to current size of allShips, wherever each are stored
 	 *		bool enemy: true to make new ships enemies, false to keep allied
 	 */ 
-	void spawn (Ship[] shipList, Gun[,][] gunList, int numShips, SpawnPoint spawn, ref Ship[] allShips,
+	void spawn (Ship[] shipList, Gun[,][] gunList, SpawnPoint spawn, ref Ship[] allShips,
 		ref int totalShips, bool enemy) {
+
+        numShips = shipList.Length;
 
 		// Record position of SpawnPoint, to put it back when we are finished spawning ships
 		Vector3 origPosition = spawn.getTransform().position;
