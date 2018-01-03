@@ -19,7 +19,7 @@ public class Carrier : Ship {
 		gunPosL = new float[,] {{}};
 
 		numTrails = 2;
-		trails = new GameObject[] {Objects.TrailOne, Objects.TrailTwo};
+		trails = new GameObject[] {Objects.objects.trailOne, Objects.objects.trailTwo};
         trailPos = new float[,] {{0.0f, -3.0f}, {0.0f, -3.0f}};
         trailScale = new Vector2 (2.0f, 1.0f);
 
@@ -28,6 +28,5 @@ public class Carrier : Ship {
         healthLoc = new Vector3(0, -4.0f, 0);
 
         prepareChildren();
-        disable();
 	}
 }

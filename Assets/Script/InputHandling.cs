@@ -178,7 +178,7 @@ public class InputHandling : MonoBehaviour {
 
     // Check if click is on ally, if so, select it
     bool selectAlly(Vector2 point2D) {
-        Ship ally = Objects.onShip(point2D);
+        Ship ally = Utility.onShip(point2D);
         if (ally != null) {
             Ship.activeShip = ally;
             numTouchesLastFrame = Input.touchCount;
@@ -191,7 +191,7 @@ public class InputHandling : MonoBehaviour {
 
     // Check if click is on enemy, if so, target it
     bool targetEnemy(Vector2 point2D) {
-        Ship enemy = Objects.onEnemy(point2D);
+        Ship enemy = Utility.onEnemy(point2D);
         if (enemy != null) {
             Ship.activeShip.setTarget(enemy.shipGameObject());
             numTouchesLastFrame = Input.touchCount;

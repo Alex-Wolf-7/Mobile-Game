@@ -22,7 +22,7 @@ abstract public class Ship : MonoBehaviour {
     public int numGunsM;
     public int numGunsL;
     protected float autoRange;
-    public float[,] gunPosS;
+    protected float[,] gunPosS;
     protected float[,] gunPosM;
     protected float[,] gunPosL;
     protected int numTrails;
@@ -51,6 +51,7 @@ abstract public class Ship : MonoBehaviour {
     GameObject border;
     GameObject healthBar;
 
+    // Overrided method that sets all "protected" values above
     abstract public void ready ();
 
     void Awake () {
@@ -77,7 +78,9 @@ abstract public class Ship : MonoBehaviour {
         handleHealthBar();
     }
     
+    // Method in charge of all movement, calls sub-methods for sub-functions
     private void move() {
+        // If tracking a ship, set it as our destination unless already firing
     	if (tracking) {
     		bool firing = isFiring();
     		if (!firing && target != null) {
@@ -88,16 +91,19 @@ abstract public class Ship : MonoBehaviour {
     		}
     	}
 
+        // Steer towards our destination
         if (isThrust) {
             rotate(); // Handles ship rotation
             thrust(); // Handlds ship movement
         } else {
+            // If hit destination or close to tracking target, cut thrusters
         	slow();
         }
 
         trail();
     }
     
+    // Handles rotating towards ship destination
     float destinationAngle; // The angle of our destination
     private void rotate() {
         Vector2 destinationDiff = destination - ship.position; // Destination in relation to ship
@@ -126,6 +132,7 @@ abstract public class Ship : MonoBehaviour {
         }
     }
 
+    // Handles acceleration or not acceleration
     private void thrust() {
         // Calculate our rotationVector
         rotationVector.x = -Mathf.Sin(ship.rotation * Mathf.Deg2Rad);
@@ -186,21 +193,22 @@ abstract public class Ship : MonoBehaviour {
 
     // Slows ship after crossing destination
     void slow () {
-        ship.angularVelocity = 0.0f;
-    	if (ship.velocity == Vector2.zero) return;
+        ship.angularVelocity = 0.0f; // If slowing, do not be turning
+    	if (ship.velocity == Vector2.zero) return; // If stopped, does not need to slow more
 
+        // Slow ship at same rate that it would otherwise speed up
     	ship.velocity -= rotationVector * (maxSpeed / accelFrames);
 
+        // If slow too much and start moving backwards, stop
     	if (ship.velocity.x * rotationVector.x < 0) { // If facing different directions
     		ship.velocity = new Vector2(0.0f, ship.velocity.y);
     	}
     	if (ship.velocity.y * rotationVector.y < 0) { // If facing different directions
     		ship.velocity = new Vector2(ship.velocity.x, 0.0f);
     	}
-
-    	destination = ship.position;
     }
     
+    // Turns border on and off, and sets its color
     void handleBorder () {
 		if (Ship.activeShip == this) {
         	border.GetComponent<SpriteRenderer>().enabled = true;
@@ -211,6 +219,7 @@ abstract public class Ship : MonoBehaviour {
         }
     }
 
+    // Turns health bar on and off, sets its color, and maintains its position under ship
     void handleHealthBar () {
         // Health bar on if health is not full
         if (health == maxHealth) {
@@ -220,7 +229,7 @@ abstract public class Ship : MonoBehaviour {
         } else {
        		healthBar.GetComponent<SpriteRenderer>().enabled = (health != maxHealth);
        		healthBar.GetComponent<SpriteRenderer>().color = healthColor();
-       		healthBar.transform.position = this.transform.position + healthLoc;
+       		healthBar.transform.position = transform.position + healthLoc;
        		healthBar.transform.eulerAngles = Vector3.zero;
        		// Health bar shrinks as damage is taken
        		healthBar.transform.localScale = new Vector3(healthPercent * healthDims[0],
@@ -230,8 +239,8 @@ abstract public class Ship : MonoBehaviour {
 
     // Set the destination for the boat to move to 
     public void setDestination (Vector2 newDestination) {
-    	tracking = false;
-    	isThrust = true;
+    	tracking = false; // No longer has a Ship destination
+    	isThrust = true; // Has to move to destination
         destination = newDestination;
     }
     
@@ -243,16 +252,16 @@ abstract public class Ship : MonoBehaviour {
 
     // Instructs guns to target a given GameObject
     public void setTarget (GameObject newTarget) {
-    	tracking = true;
+    	tracking = true; // Explicit attack command, move towards ship
     	target = newTarget;
     	for (int i = 0; i < numGunsS; i++) {
-    		gunsS[i].setTarget(newTarget);
+    		gunsS[i].setTarget(target);
     	}
     	for (int i = 0; i < numGunsM; i++) {
-    		gunsM[i].setTarget(newTarget);
+    		gunsM[i].setTarget(target);
     	}
     	for (int i = 0; i < numGunsL; i++) {
-    		gunsL[i].setTarget(newTarget);
+    		gunsL[i].setTarget(target);
     	}
     }
 
@@ -265,22 +274,24 @@ abstract public class Ship : MonoBehaviour {
     	float closestDist = autoRange;
     	GameObject closest = null;;
     	if (enemy) {
-    		for (int i = 0; i < Objects.numShips; i++) {
-    			float dist = Mathf.Abs((transform.position - Objects.allShips[i].shipGameObject().transform.position).magnitude);
+    		for (int i = 0; i < Objects.objects.numShips; i++) {
+    			float dist = Mathf.Abs((transform.position -
+                    Objects.objects.allShips[i].shipGameObject().transform.position).magnitude);
     			
     			if (closest == null || dist < closestDist) {
     				closestDist = dist;
-    				closest = Objects.allShips[i].shipGameObject();
+    				closest = Objects.objects.allShips[i].shipGameObject();
     			}
     		}
     	
     	} else {
-    		for (int i = 0; i < Objects.numEnemies; i++) {
-    			float dist = Mathf.Abs((transform.position - Objects.allEnemies[i].shipGameObject().transform.position).magnitude);
+    		for (int i = 0; i < Objects.objects.numEnemies; i++) {
+    			float dist = Mathf.Abs((transform.position -
+                    Objects.objects.allEnemies[i].shipGameObject().transform.position).magnitude);
     			
     			if (closest == null || dist < closestDist) {
     				closestDist = dist;
-    				closest = Objects.allEnemies[i].shipGameObject();
+    				closest = Objects.objects.allEnemies[i].shipGameObject();
     			}
     		}
     	}
@@ -296,6 +307,7 @@ abstract public class Ship : MonoBehaviour {
     	tracking = enemy;
     }
 
+    // Returns true if any gun is firing
     bool isFiring () {
     	for (int i = 0; i < numGunsS; i++) {
     		if (gunsS[i].isFiring()) {
@@ -320,19 +332,20 @@ abstract public class Ship : MonoBehaviour {
     	return ship.gameObject;
     }
 
-    // Returns if ship is destroyed or not
+    // Damages ship, destroys it if health is zero
     public void damage (float damage) {
     	health -= damage;
     	healthPercent = health / maxHealth;
     	if (health <= 0) destroyShip();
     }
 
+    // Destorys ship and removes it from the list of all ships
     void destroyShip () {
     	// Remove ship from global arrays
     	if (enemy) {
-    		Objects.removeEnemy(this);
+    		Utility.removeEnemy(this);
     	} else if (!enemy) {
-    		Objects.removeShip(this);
+    		Utility.removeShip(this);
     	}
 
     	Destroy(ship.gameObject);
@@ -378,40 +391,12 @@ abstract public class Ship : MonoBehaviour {
 
 	}
 
-	// *********************************************************************
-	// * Initialization methods, sets up new ship as as a certain *
-	// *********************************************************************
+	/********************************************
+	 * Initialization methods, sets up new ship *
+	 ********************************************/
 	public void prepareChildren () {
 		createTrail();
 		createBorder();
-	}
-
-	public void createGuns (GunType[] smallGuns, GunType[] mediumGuns, GunType[] largeGuns) {
-		gunsS = new Gun[numGunsS];
-		for (int i = 0; i < numGunsS; i++) {
-			gunsS[i] = Instantiate(smallGuns[i].gun, transform);
-			gunsS[i].newGun(smallGuns[i]);
-			gunsS[i].transform.localPosition = new Vector3(gunPosS[i, 0], gunPosS[i, 1], transform.position.z);
-			gunsS[i].transform.rotation = transform.rotation;
-		}
-
-		gunsM = new Gun[numGunsM];
-		for (int i = 0; i < numGunsM; i++) {
-			gunsM[i] = Instantiate(mediumGuns[i].gun, transform);
-			gunsM[i].newGun(mediumGuns[i]);
-			gunsM[i].transform.localPosition = new Vector3(gunPosM[i, 0], gunPosM[i, 1], transform.position.z);
-			gunsM[i].transform.rotation = transform.rotation;
-		}
-
-		gunsL = new Gun[numGunsL];
-		for (int i = 0; i < numGunsL; i++) {
-			gunsL[i] = Instantiate(largeGuns[i].gun, transform);
-			gunsL[i].newGun(largeGuns[i]);
-			gunsL[i].transform.localPosition = new Vector3(gunPosL[i, 0], gunPosL[i, 1], transform.position.z);
-			gunsL[i].transform.transform.rotation = transform.rotation;
-		}
-
-        enable();
 	}
 
 	void createTrail () {
@@ -425,10 +410,39 @@ abstract public class Ship : MonoBehaviour {
 	}
 
 	void createBorder () {
-		border = Instantiate(Objects.Border, transform);
+		border = Instantiate(Objects.objects.border, transform);
 		border.transform.localScale = new Vector3(borderDims[0], borderDims[1], 1);
-		healthBar = Instantiate(Objects.healthBar, transform);
+		healthBar = Instantiate(Objects.objects.healthBar, transform);
 		healthBar.transform.localScale = new Vector3(healthDims[0], healthDims[1], 1);
 		healthLoc = new Vector3(healthLoc[0], healthLoc[1], healthLoc[2]);
 	}
+
+
+    public void createGuns (GunType[] smallGuns, GunType[] mediumGuns, GunType[] largeGuns) {
+        gunsS = new Gun[numGunsS];
+        for (int i = 0; i < numGunsS; i++) {
+            gunsS[i] = Instantiate(smallGuns[i].gun, transform);
+            gunsS[i].newGun(smallGuns[i]);
+            gunsS[i].transform.localPosition = new Vector3(gunPosS[i, 0], gunPosS[i, 1], transform.position.z);
+            gunsS[i].transform.rotation = transform.rotation;
+        }
+
+        gunsM = new Gun[numGunsM];
+        for (int i = 0; i < numGunsM; i++) {
+            gunsM[i] = Instantiate(mediumGuns[i].gun, transform);
+            gunsM[i].newGun(mediumGuns[i]);
+            gunsM[i].transform.localPosition = new Vector3(gunPosM[i, 0], gunPosM[i, 1], transform.position.z);
+            gunsM[i].transform.rotation = transform.rotation;
+        }
+
+        gunsL = new Gun[numGunsL];
+        for (int i = 0; i < numGunsL; i++) {
+            gunsL[i] = Instantiate(largeGuns[i].gun, transform);
+            gunsL[i].newGun(largeGuns[i]);
+            gunsL[i].transform.localPosition = new Vector3(gunPosL[i, 0], gunPosL[i, 1], transform.position.z);
+            gunsL[i].transform.transform.rotation = transform.rotation;
+        }
+
+        enable();
+    }
 }

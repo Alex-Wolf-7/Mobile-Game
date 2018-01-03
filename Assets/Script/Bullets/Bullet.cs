@@ -37,7 +37,7 @@ public abstract class Bullet : MonoBehaviour {
 	// Check if collided with enemy or ally
 	bool checkCollision() {
 		if (enemy) {
-			Ship hitShip = Objects.onShip(transform.position);
+			Ship hitShip = Utility.onShip(transform.position);
 			if (hitShip != null) {
 				hitShip.damage(damage);
 				return true;
@@ -46,7 +46,7 @@ public abstract class Bullet : MonoBehaviour {
 			}
 
 		} else {
-			Ship hitEnemy = Objects.onEnemy(transform.position);
+			Ship hitEnemy = Utility.onEnemy(transform.position);
 			if (hitEnemy != null) {
 				hitEnemy.damage(damage);
 				return true;

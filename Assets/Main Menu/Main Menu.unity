@@ -921,6 +921,61 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
+--- !u!1 &1239518167
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 1239518169}
+  - component: {fileID: 1239518168}
+  m_Layer: 0
+  m_Name: Objects
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1239518168
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1239518167}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c363522e091e4862855a23a3afe5e62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  carrier: {fileID: 114213221962140396, guid: 561e1fb13ca274810ae6b2a87e19f687, type: 2}
+  cruiser: {fileID: 114962340048527778, guid: 0208dbf0f70354f549e8f21053b09689, type: 2}
+  gunS: {fileID: 114187725300885792, guid: 1847005b87e5c457982c0947adcaa424, type: 2}
+  gunM: {fileID: 114116939192673690, guid: ff44736ba7f574cfea68c1f336920d33, type: 2}
+  trailOne: {fileID: 1885209288271654, guid: 6ceb39950eb484b02a29ce733417ecfb, type: 2}
+  trailTwo: {fileID: 1994464826237268, guid: 6a4d6d0c56c454921aa60cd94f606608, type: 2}
+  bulletS: {fileID: 114028222190537022, guid: de8f037b7a8f04d3b91c413590889db1, type: 2}
+  bulletM: {fileID: 114593029283306550, guid: 9c8e0c22478cf4deab568405453b5208, type: 2}
+  spawn: {fileID: 114444957232711234, guid: e809a43977ea14ea9929c39e5b12b730, type: 2}
+  border: {fileID: 1828823742702644, guid: aa1d3a3919fdf49ec859a26f1e692533, type: 2}
+  healthBar: {fileID: 1030317322049860, guid: 9f6322005853449f9b1d44918244359a, type: 2}
+  allShips: []
+  allEnemies: []
+  numShips: 0
+  numEnemies: 0
+--- !u!4 &1239518169
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1239518167}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 91}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1399562199
 GameObject:
   m_ObjectHideFlags: 0

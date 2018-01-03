@@ -13,8 +13,8 @@ public abstract class GunType {
 
 public class GunS : GunType {
 	public GunS () {
-		gun = Objects.GunS;
-		bullet = Objects.bulletS;
+		gun = Objects.objects.gunS;
+		bullet = Objects.objects.bulletS;
 		size = 's';
 		range = 20.0f;
 		framesPerShot = 15;
@@ -25,8 +25,8 @@ public class GunS : GunType {
 
 public class GunM : GunType {
 	public GunM () {
-		gun = Objects.GunM;
-		bullet = Objects.bulletM;
+		gun = Objects.objects.gunM;
+		bullet = Objects.objects.bulletM;
 		size = 'm';
 		range = 30.0f;
 		framesPerShot = 60;

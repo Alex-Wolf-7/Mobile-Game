@@ -16,60 +16,60 @@ public class Level1 : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		shipList = new Ship[] {Objects.Carrier, Objects.Cruiser, Objects.Cruiser};
+		shipList = new Ship[] {Objects.objects.carrier, Objects.objects.cruiser, Objects.objects.cruiser};
 
 		// List of ship gun loadouts
 		shipGunList = new GunType[,][] {
 			{
 				// Carrier
-				new GunType[] {Objects.GunSVars},
-				new GunType[] {Objects.GunMVars},
+				new GunType[] {Objects.objects.gunSVars},
+				new GunType[] {Objects.objects.gunMVars},
 				new GunType[] {}
 			},
 			{
 				// Cruiser
-				new GunType[] {Objects.GunSVars, Objects.GunSVars},
+				new GunType[] {Objects.objects.gunSVars, Objects.objects.gunSVars},
 				new GunType[] {},
 				new GunType[] {}
 			},
 			{
 				// Cruiser
-				new GunType[] {Objects.GunSVars, Objects.GunSVars},
+				new GunType[] {Objects.objects.gunSVars, Objects.objects.gunSVars},
 				new GunType[] {},
 				new GunType[] {}
 			}
 		};
 
 		numShips = 3;
-		shipSpawn = Instantiate(Objects.Spawn, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 0.0f));
+		shipSpawn = Instantiate(Objects.objects.spawn, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 0.0f));
 
 		// Enemy ships
-		enemyList = new Ship[] {Objects.Carrier, Objects.Cruiser};
+		enemyList = new Ship[] {Objects.objects.carrier, Objects.objects.cruiser};
 		
 		// Enemy ship gun loudouts
 		enemyGunList = new GunType[,][] {
 			{
 				// Carrier
-				new GunType[] {Objects.GunSVars},
-				new GunType[] {Objects.GunMVars},
+				new GunType[] {Objects.objects.gunSVars},
+				new GunType[] {Objects.objects.gunMVars},
 				new GunType[] {}
 			},
 			{
 				// Cruiser
-				new GunType[] {Objects.GunSVars, Objects.GunSVars},
+				new GunType[] {Objects.objects.gunSVars, Objects.objects.gunSVars},
 				new GunType[] {},
 				new GunType[] {}
 			},
 		};
 
 		numEnemies = 2;
-		enemySpawn = Instantiate(Objects.Spawn, new Vector3(0.0f, 40.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 180.0f));
+		enemySpawn = Instantiate(Objects.objects.spawn, new Vector3(0.0f, 40.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 180.0f));
 
 		// Spawn ships as set up above
-		spawn(shipList, shipGunList, numShips, shipSpawn, ref Objects.allShips, ref Objects.numShips, false);
-		spawn(enemyList, enemyGunList, numEnemies, enemySpawn, ref Objects.allEnemies, ref Objects.numEnemies, true);
+		spawn(shipList, shipGunList, numShips, shipSpawn, ref Objects.objects.allShips, ref Objects.objects.numShips, false);
+		spawn(enemyList, enemyGunList, numEnemies, enemySpawn, ref Objects.objects.allEnemies, ref Objects.objects.numEnemies, true);
 		// Active ship is first allied ship
-		Ship.activeShip = Objects.allShips[0];
+		Ship.activeShip = Objects.objects.allShips[0];
 	}
 
 	/*

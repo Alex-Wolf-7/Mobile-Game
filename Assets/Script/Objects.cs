@@ -1,89 +1,62 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 // Public static class holding hidden objects. Used for instantiating new objects
-public static class Objects {
+public class Objects : MonoBehaviour {
+	public static Objects objects;
+
 	// list of objects
-	public static Carrier Carrier;
-	public static Cruiser Cruiser;
-	public static Gun GunS;
-	public static Gun GunM;
-	public static GameObject TrailOne;
-	public static GameObject TrailTwo;
-	public static BulletS bulletS;
-	public static BulletM bulletM;
-	public static SpawnPoint Spawn;
-	public static GameObject Border;
-	public static GameObject healthBar;
+	public Carrier carrier;
+	public Cruiser cruiser;
+	public Gun gunS;
+	public Gun gunM;
+	public GameObject trailOne;
+	public GameObject trailTwo;
+	public BulletS bulletS;
+	public BulletM bulletM;
+	public SpawnPoint spawn;
+	public GameObject border;
+	public GameObject healthBar;
 
 	// list of gun types
-	public static GunS GunSVars;
-	public static GunM GunMVars;
+	public GunS gunSVars;
+	public GunM gunMVars;
 
-	public static Ship[] allShips;
-	public static Ship[] allEnemies;
-	public static int numShips;
-	public static int numEnemies;
+	public Ship[] allShips;
+	public Ship[] allEnemies;
+	public int numShips;
+	public int numEnemies;
 
-	// *******************
-	// * Utility methods *
-	// *******************
-	// Checks which ship a point is on
-	public static Ship onShip (Vector2 point) {
-		for (int i = 0; i < numShips; i++) {
-            if (allShips[i].pointOnShip(point)) {
-                return allShips[i];
-            }
-        }
-        return null;
+	// Lets only one of this class exist
+	void Start () {
+		if (Objects.objects == null) {
+			Objects.objects = this;
+			DontDestroyOnLoad(gameObject);
+		} else {
+			Destroy(gameObject);
+		}
+
+		// Gun Types
+		gunSVars = new GunS();
+		gunMVars = new GunM();
 	}
 
-	// Checks which enemy a point is on
-	public static Ship onEnemy (Vector2 point) {
-		for (int i = 0; i < numEnemies; i++) {
-            if (allEnemies[i].pointOnShip(point)) {
-                return allEnemies[i];
-            }
-        }
-        return null;
-	}
+	// Subscribes/Desubscribes us to "OnLevelFinishedLoading" calls
+	void OnEnable() {
+		SceneManager.sceneLoaded += OnLevelFinishedLoading;
+    }
+    void OnDisable() {
+    	SceneManager.sceneLoaded += OnLevelFinishedLoading;
+    }
 
-	// Removes ship from array of all ships
-	public static void removeShip (Ship ship) {
-		int index = numShips;  // Impossible value, check to see if it hasn't changed
-		for (int i = 0; i < numShips; i++) {
-			if (ship == allShips[i]) {
-				index = i;
-				break;
-			}
-		}
-		// If index hasn't changed, no matching ships found, some error
-		if (index == numShips) return;
-
-		numShips--;
-		for (int i = index; i < numShips; i++) {
-			allShips[i] = allShips[i + 1];
-		}
-		allShips[numShips] = null;
-	}
-
-	// Removes enemy from array of all enemies
-	public static void removeEnemy (Ship enemy) {
-		int index = numEnemies;
-		for (int i = 0; i < numEnemies; i++) {
-			if (enemy == allEnemies[i]) {
-				index = i;
-				break;
-			}
-		}
-		// If index hasn't changed, no matching enemies found, some error
-		if (index == numEnemies) return;
-
-		numEnemies--;
-		for (int i = index; i < numEnemies; i++) {
-			allEnemies[i] = allEnemies[i + 1];
-		}
-		allEnemies[numEnemies] = null;
-	}
+    // When new level loads, remove our variables
+    void OnLevelFinishedLoading(Scene scene, LoadSceneMode mode) {
+    	allShips = new Ship[ShipVars.maxAllies];
+		numShips = 0;
+		allEnemies = new Ship[ShipVars.maxEnemies];
+		numEnemies = 0;
+		Ship.activeShip = null;
+    }
 }
