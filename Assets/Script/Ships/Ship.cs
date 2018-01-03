@@ -418,27 +418,24 @@ abstract public class Ship : MonoBehaviour {
 	}
 
 
-    public void createGuns (GunType[] smallGuns, GunType[] mediumGuns, GunType[] largeGuns) {
+    public void createGuns (Gun[] smallGuns, Gun[] mediumGuns, Gun[] largeGuns) {
         gunsS = new Gun[numGunsS];
         for (int i = 0; i < numGunsS; i++) {
-            gunsS[i] = Instantiate(smallGuns[i].gun, transform);
-            gunsS[i].newGun(smallGuns[i]);
+            gunsS[i] = Instantiate(smallGuns[i], transform);
             gunsS[i].transform.localPosition = new Vector3(gunPosS[i, 0], gunPosS[i, 1], transform.position.z);
             gunsS[i].transform.rotation = transform.rotation;
         }
 
         gunsM = new Gun[numGunsM];
         for (int i = 0; i < numGunsM; i++) {
-            gunsM[i] = Instantiate(mediumGuns[i].gun, transform);
-            gunsM[i].newGun(mediumGuns[i]);
+            gunsM[i] = Instantiate(mediumGuns[i], transform);
             gunsM[i].transform.localPosition = new Vector3(gunPosM[i, 0], gunPosM[i, 1], transform.position.z);
             gunsM[i].transform.rotation = transform.rotation;
         }
 
         gunsL = new Gun[numGunsL];
         for (int i = 0; i < numGunsL; i++) {
-            gunsL[i] = Instantiate(largeGuns[i].gun, transform);
-            gunsL[i].newGun(largeGuns[i]);
+            gunsL[i] = Instantiate(largeGuns[i], transform);
             gunsL[i].transform.localPosition = new Vector3(gunPosL[i, 0], gunPosL[i, 1], transform.position.z);
             gunsL[i].transform.transform.rotation = transform.rotation;
         }

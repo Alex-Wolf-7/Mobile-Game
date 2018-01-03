@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class Level1 : MonoBehaviour {
 	Ship[] shipList; // List of allied ships
-	GunType[,][] shipGunList; // Guns to put on each ship: shipGunList[ship, S/M/L][gun]
+	Gun[,][] shipGunList; // Guns to put on each ship: shipGunList[ship, S/M/L][gun]
 	int numShips; // number of ships in shiplist
 	SpawnPoint shipSpawn; // starting spawnpoint for ships
 	
 	// Same as above but for enemy ships
 	Ship[] enemyList;
-	GunType[,][] enemyGunList;
+	Gun[,][] enemyGunList;
 	int numEnemies;
 	SpawnPoint enemySpawn;
 
@@ -19,24 +19,24 @@ public class Level1 : MonoBehaviour {
 		shipList = new Ship[] {Objects.objects.carrier, Objects.objects.cruiser, Objects.objects.cruiser};
 
 		// List of ship gun loadouts
-		shipGunList = new GunType[,][] {
+		shipGunList = new Gun[,][] {
 			{
 				// Carrier
-				new GunType[] {Objects.objects.gunSVars},
-				new GunType[] {Objects.objects.gunMVars},
-				new GunType[] {}
+				new Gun[] {Objects.objects.gunS},
+				new Gun[] {Objects.objects.gunM},
+				new Gun[] {}
 			},
 			{
 				// Cruiser
-				new GunType[] {Objects.objects.gunSVars, Objects.objects.gunSVars},
-				new GunType[] {},
-				new GunType[] {}
+				new Gun[] {Objects.objects.gunS, Objects.objects.gunS},
+				new Gun[] {},
+				new Gun[] {}
 			},
 			{
 				// Cruiser
-				new GunType[] {Objects.objects.gunSVars, Objects.objects.gunSVars},
-				new GunType[] {},
-				new GunType[] {}
+				new Gun[] {Objects.objects.gunS, Objects.objects.gunS},
+				new Gun[] {},
+				new Gun[] {}
 			}
 		};
 
@@ -47,18 +47,18 @@ public class Level1 : MonoBehaviour {
 		enemyList = new Ship[] {Objects.objects.carrier, Objects.objects.cruiser};
 		
 		// Enemy ship gun loudouts
-		enemyGunList = new GunType[,][] {
+		enemyGunList = new Gun[,][] {
 			{
 				// Carrier
-				new GunType[] {Objects.objects.gunSVars},
-				new GunType[] {Objects.objects.gunMVars},
-				new GunType[] {}
+				new Gun[] {Objects.objects.gunS},
+				new Gun[] {Objects.objects.gunM},
+				new Gun[] {}
 			},
 			{
 				// Cruiser
-				new GunType[] {Objects.objects.gunSVars, Objects.objects.gunSVars},
-				new GunType[] {},
-				new GunType[] {}
+				new Gun[] {Objects.objects.gunS, Objects.objects.gunS},
+				new Gun[] {},
+				new Gun[] {}
 			},
 		};
 
@@ -83,7 +83,7 @@ public class Level1 : MonoBehaviour {
 	 *		ref int totalShips: reference to current size of allShips, wherever each are stored
 	 *		bool enemy: true to make new ships enemies, false to keep allied
 	 */ 
-	void spawn (Ship[] shipList, GunType[,][] gunList, int numShips, SpawnPoint spawn, ref Ship[] allShips,
+	void spawn (Ship[] shipList, Gun[,][] gunList, int numShips, SpawnPoint spawn, ref Ship[] allShips,
 		ref int totalShips, bool enemy) {
 
 		// Record position of SpawnPoint, to put it back when we are finished spawning ships

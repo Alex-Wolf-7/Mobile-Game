@@ -10,8 +10,8 @@ public class Objects : MonoBehaviour {
 	// list of objects
 	public Carrier carrier;
 	public Cruiser cruiser;
-	public Gun gunS;
-	public Gun gunM;
+	public GunS gunS;
+	public GunM gunM;
 	public GameObject trailOne;
 	public GameObject trailTwo;
 	public BulletS bulletS;
@@ -19,10 +19,6 @@ public class Objects : MonoBehaviour {
 	public SpawnPoint spawn;
 	public GameObject border;
 	public GameObject healthBar;
-
-	// list of gun types
-	public GunS gunSVars;
-	public GunM gunMVars;
 
 	public Ship[] allShips;
 	public Ship[] allEnemies;
@@ -37,10 +33,6 @@ public class Objects : MonoBehaviour {
 		} else {
 			Destroy(gameObject);
 		}
-
-		// Gun Types
-		gunSVars = new GunS();
-		gunMVars = new GunM();
 	}
 
 	// Subscribes/Desubscribes us to "OnLevelFinishedLoading" calls
