@@ -26,13 +26,18 @@ public class Objects : MonoBehaviour {
 	public int numEnemies;
 
 	// Lets only one of this class exist
-	void Start () {
+	void Awake () {
 		if (Objects.objects == null) {
 			Objects.objects = this;
 			DontDestroyOnLoad(gameObject);
 		} else {
 			Destroy(gameObject);
 		}
+
+        if (Fleet.fleet == null) {
+            new Fleet();
+            Fleet.fleet.load();
+        }
 	}
 
 	// Subscribes/Desubscribes us to "OnLevelFinishedLoading" calls

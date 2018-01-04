@@ -12,6 +12,7 @@ abstract public class Ship : MonoBehaviour {
     public float maxHealth;
     public float health;
     public float healthPercent;
+    bool fakeShip = false;
 
     // Constant variables set by ship-deriving class
 	public string shipName;
@@ -64,6 +65,11 @@ abstract public class Ship : MonoBehaviour {
     void FixedUpdate() {
     	// Disabled ships do not need to move or do anything
     	if (isEnabled == false) return;
+        if (fakeShip) {
+            isThrust = true;
+            trail();
+            return;
+        }
 
         if (ship.rotation > 180) {
             ship.rotation -= 360;
@@ -212,7 +218,6 @@ abstract public class Ship : MonoBehaviour {
 		if (Ship.activeShip == this) {
         	border.GetComponent<SpriteRenderer>().enabled = true;
         	border.GetComponent<SpriteRenderer>().color = healthColor();
-        	healthBar.GetComponent<SpriteRenderer>().enabled = false;
         } else {
         	border.GetComponent<SpriteRenderer>().enabled = false;
         }
@@ -389,6 +394,22 @@ abstract public class Ship : MonoBehaviour {
 		}
 
 	}
+
+    // Creates a stationary ship, trail == true creates a trail behind it
+    public void setFakeShip(bool trail) {
+        if (trail == true) {
+            fakeShip = true;
+            if (activeTrail == numTrails) {
+                activeTrail = numTrails - 1;
+                trails[numTrails - 1].GetComponent<SpriteRenderer>().enabled = true;
+            }
+        } else {
+            isEnabled = false;
+        }
+        healthBar.GetComponent<SpriteRenderer>().enabled = false;
+        border.GetComponent<SpriteRenderer>().enabled = false;
+    }
+
 
 	/********************************************
 	 * Initialization methods, sets up new ship *

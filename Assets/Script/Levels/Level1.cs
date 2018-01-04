@@ -19,9 +19,7 @@ public class Level1 : MonoBehaviour {
 		shipSpawn = Instantiate(Objects.objects.spawn, new Vector3(0.0f, 0.0f, 0.0f), Quaternion.Euler(0.0f, 0.0f, 0.0f));
 
         // If no fleet made, make an empty one
-        if (Fleet.fleet == null) {
-            Fleet fleet = new Fleet();
-        }
+        Fleet.fleetCheck();
 
         // Sort fleet to prepare it to be checked out
         Fleet.fleet.sortShips();

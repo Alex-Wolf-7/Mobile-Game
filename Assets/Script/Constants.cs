@@ -20,3 +20,8 @@ public static class ShipVars {
 	public const int maxAllies = 10;
 	public const int maxEnemies = 20;
 }
+
+public static class FleetEditVars {
+    public const float dropDownWidthPercent = 1.0f;
+    public const float dropDownHeightPercent = 0.25f;
+}

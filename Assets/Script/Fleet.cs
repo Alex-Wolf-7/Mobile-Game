@@ -37,6 +37,7 @@ public class Fleet {
 	}
 
     public bool save () {
+        sortShips();
         BinaryFormatter bf = new BinaryFormatter();
         FileStream file = File.Create(Application.persistentDataPath + "/fleet.dat");
 
@@ -66,10 +67,16 @@ public class Fleet {
 	}
 
     public Ship getShip (int shipNum) {
+        if (ships[shipNum] == null) {
+            return null;
+        }
         return code.getShip(ships[shipNum].ship);
 	}
 
     public Gun getGuns (int shipNum, char size, int gunNum) {
+        if (ships[shipNum] == null) {
+            return null;
+        }
         if (size == 's') {
             return code.getGunS(ships[shipNum].gunsS[gunNum]);
         } else if (size == 'm') {
@@ -139,6 +146,12 @@ public class Fleet {
             allGuns[i] = code.getGunL(ships[shipIndex].gunsL[i]);
         }
         return allGuns;
+    }
+
+    public static void fleetCheck () {
+        if (Fleet.fleet == null) {
+            new Fleet();
+        }
     }
 };
 
